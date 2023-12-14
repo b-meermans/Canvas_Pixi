@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>2d Grid Test</title>
+        <style>
+            /* Add any additional styling for your canvas here */
+            canvas {
+                border: 1px solid #000;
+            }
+        </style>
+    </head>
+
+    <!-- Body -->
+    <body>
+        <h1>AoPS Graphics Test</h1>
+        <canvas id="gridCanvas" width="800" height="400"></canvas>
+        <textarea id="log-output" rows="30" cols="97" readonly></textarea>
+        <button onclick="clearLog()">Clear</button>
+        <br>
+        <form id="myForm" onsubmit="submitForm(); return false;">
+            <label for="inputText">Enter Text:</label>
+            <input type="text" id="inputText" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        <script src="console_output.js"></script>
+        <script src="https://cjrtnc.leaningtech.com/3_20231211_315/cj3loader.js"></script>
+        <script src="running_java2.js"></script>
+    </body>
+</html>
