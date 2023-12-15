@@ -11,7 +11,11 @@ public class Aops2DRunner {
         stage = new MyStage();
     }
 
-    public void act(double mouseX, double mouseY) {
+    public void act(double mouseX, double mouseY, String[] keysPressed) {
+
+        for (String key : keysPressed) {
+            System.out.println(key);
+        }
         AopsGui.updateMouse(mouseX, mouseY);
 
         stage.act();

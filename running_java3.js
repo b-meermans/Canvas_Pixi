@@ -7,25 +7,15 @@ originalSprites = new Map();
 let clickX, clickY;
 let mouseX = 0;
 let mouseY = 0;
+const keysPressed = new Set();
+
 
 (async function () {
     // Start up Cheerpj
     await cheerpjInit();
 
-    // Build and add the PIXI Application to the screen
-    if (!app) {
-        app = new PIXI.Application({
-            width: 640,
-            height: 360
-        });
-    }
-    document.body.appendChild(app.view);
-
-    // Keep track of the mouse (single player)
-    app.view.addEventListener('pointermove', (event) => {
-        mouseX = event.clientX - app.view.getBoundingClientRect().left;
-        mouseY = event.clientY - app.view.getBoundingClientRect().top;
-    });
+    // Build the application and add in the listeners
+    setUpPixi();
 
     // Load the Java Runner
     const lib = await cheerpjRunLibrary("/app/build/AopsApp.jar");
@@ -37,7 +27,7 @@ let mouseY = 0;
     async function updateJava() {
         try {
             // Tell Java where the mouse is and to perform one update
-            await runner.act(mouseX, mouseY);
+            await runner.act(mouseX, mouseY, Array.from(keysPressed));
 
             // Ask for the current state of the actors
             const actors = await runner.getActors();
@@ -103,4 +93,32 @@ function synchronizeSprites(incomingSprites) {
             incomingSprite.pivot.y = incomingSprite.height / 2;
         }
     }
+}
+
+
+function setUpPixi() {
+    app = new PIXI.Application({
+        width: 640,
+        height: 360
+    });
+    document.body.appendChild(app.view);
+    addMouseListener();
+    addKeyboardListener();
+}
+
+function addMouseListener() {
+    app.view.addEventListener('pointermove', (event) => {
+        mouseX = event.clientX - app.view.getBoundingClientRect().left;
+        mouseY = event.clientY - app.view.getBoundingClientRect().top;
+    });
+}
+
+function addKeyboardListener() {
+    document.addEventListener('keydown', (event) => {
+        keysPressed.add(event.key.toLowerCase());
+    });
+
+    document.addEventListener('keyup', (event) => {
+        keysPressed.delete(event.key.toLowerCase());
+    });
 }

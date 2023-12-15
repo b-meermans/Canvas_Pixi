@@ -50,6 +50,11 @@ public abstract class Actor {
         this.x = x;
     }
 
+    public void setLocation(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public String getID() {
         return uuid.toString();
     }
