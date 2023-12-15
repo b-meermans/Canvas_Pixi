@@ -83,7 +83,7 @@ function submitForm() {
         try {
             await runner.act(mouseX, mouseY);
 
-            const actors = await runner.getActor();
+            const actors = await runner.getActors();
             const size = await actors.size();
 
             let javaActors = [];

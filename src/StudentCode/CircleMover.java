@@ -1,3 +1,6 @@
+package StudentCode;
+import AopsGui.*;
+
 public class CircleMover extends Actor {
     public CircleMover(int x, int y) {
         super(x, y);

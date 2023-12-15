@@ -1,22 +1,30 @@
-//
+package AopsGui;//
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by FernFlower decompiler)
 //
 
 import java.util.Objects;
+import java.util.UUID;
 
 public abstract class Actor {
+    private static final String DEFAULT_IMAGE = "AoPS.png";
+    private Stage stage;
+
+    // TODO Get the uuid out of here. Do not want students to see it.
+    private UUID uuid;
     private double x;
     private double y;
     private double rotation;
-
-    public Actor() {
-        this(0, 0);
-    }
+    private String image;
 
     public Actor(double x, double y) {
+        this(x, y, DEFAULT_IMAGE);
+    }
+    public Actor(double x, double y, String image) {
+        uuid = UUID.randomUUID();
         this.x = x;
         this.y = y;
+        this.image = image;
     }
 
     public void act() {}
@@ -40,6 +48,10 @@ public abstract class Actor {
 
     public void setX(double x) {
         this.x = x;
+    }
+
+    public String getID() {
+        return uuid.toString();
     }
 
     public double getY() {
@@ -74,6 +86,10 @@ public abstract class Actor {
     }
 
     public String toString() {
-        return "Actor{x=" + this.x + ", y=" + this.y + ", rotation=" + this.rotation + "}";
+        return "AopsGui.Actor{x=" + this.x + ", y=" + this.y + ", rotation=" + this.rotation + "}";
+    }
+
+    void setStage(Stage stage) {
+        this.stage = stage;
     }
 }

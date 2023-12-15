@@ -1,97 +1,106 @@
 // Setup PIXI Window Information
-let app = new PIXI.Application({
-    width: 640,
-    height: 360
-});
-
-document.body.appendChild(app.view);
-
-
+let app;
 
 
 // Interactive Variables
-const sprites = [];
+originalSprites = new Map();
 let clickX, clickY;
-let changed = false;
+let mouseX = 0;
+let mouseY = 0;
+
+(async function () {
+    // Start up Cheerpj
+    await cheerpjInit();
+
+    // Build and add the PIXI Application to the screen
+    if (!app) {
+        app = new PIXI.Application({
+            width: 640,
+            height: 360
+        });
+    }
+    document.body.appendChild(app.view);
+
+    // Keep track of the mouse (single player)
+    app.view.addEventListener('pointermove', (event) => {
+        mouseX = event.clientX - app.view.getBoundingClientRect().left;
+        mouseY = event.clientY - app.view.getBoundingClientRect().top;
+    });
+
+    // Load the Java Runner
+    const lib = await cheerpjRunLibrary("/app/build/AopsApp.jar");
+    const Aops2DRunner = await lib.Aops2DRunner;
+    const runner = await new Aops2DRunner();
+
+    // Main Runner. Ask the Java project to perform one update loop.
+    // Take the results from the Java update and update PIXI to match
+    async function updateJava() {
+        try {
+            // Tell Java where the mouse is and to perform one update
+            await runner.act(mouseX, mouseY);
+
+            // Ask for the current state of the actors
+            const actors = await runner.getActors();
+            const size = await actors.size();
+
+            // Convert the Java list of Actors into a map of Sprites
+            const javaActors = new Map();
+            for (let i = 0; i < size; i++) {
+                const actor = await actors.get(i);
+                const x = await actor.getX();
+                const y = await actor.getY();
+                const rotation = await actor.getRotation();
+                const id = await actor.getID();
+
+                const sprite = PIXI.Sprite.from("images/balloon.png");
+                sprite.id = id;
+                sprite.x = x;
+                sprite.y = y;
+                sprite.rotation = rotation;
+                javaActors.set(id, sprite);
+            }
+
+            // Sync up the results from Java onto PixiJS
+            synchronizeSprites(javaActors);
+        } catch (error) {
+            // console.error(error);
+        }
+    }
+    setInterval(updateJava, 20);
+})();
 
 
-
-// Demo Sprites
-function demoSprites() {
-    for (let i = 0; i < 100; i++) {
-        let sprite = PIXI.Sprite.from('./images/balloon.png');
-        sprite.y = i - sprite.width / 2;
-        sprite.spins = true;
-        app.stage.addChild(sprite);
-        sprites.push(sprite);
+// Takes in a map of Sprites that Java calculated
+// Some sprites may be new, some may not be around anymore (removed)
+// Check for all removed sprites - and remove them from Pixi
+// For all other sprites - update them on Pixi
+function synchronizeSprites(incomingSprites) {
+    // Remove sprites that are not present in the incoming list
+    for (const [uuid, originalSprite] of this.originalSprites) {
+        if (!incomingSprites.has(uuid)) {
+            originalSprite.destroy();
+            this.originalSprites.delete(uuid);
+        }
     }
 
-    let sprite = PIXI.Sprite.from('./images/plane.png');
-    app.stage.addChild(sprite);
-    sprite = PIXI.Sprite.from('./images/plane.png');
-    sprite.y = 100;
-    app.stage.addChild(sprite);
-}
+    // Add new sprites or update existing ones
+    for (const [uuid, incomingSprite] of incomingSprites) {
 
-demoSprites();
+        if (this.originalSprites.has(uuid)) {
+            // Update existing sprite
+            const originalSprite = this.originalSprites.get(uuid);
+            originalSprite.x = incomingSprite.x;
+            originalSprite.y = incomingSprite.y;
+            originalSprite.pivot.x = originalSprite.width / 2;
+            originalSprite.pivot.y = originalSprite.height / 2;
+            originalSprite.rotation = incomingSprite.rotation;
+        } else {
 
-
-
-
-function updateChildren() {
-    // Re-write. I want to check to see if there are new children to be added, old children to be removed, and then
-    // update the correct values of the same children.
-
-    // Remove list
-    // Add list
-    // Update list
-
-    app.stage.removeChildren();
-
-    sprites.forEach (sprite => {
-        app.stage.addChild(sprite);
-    });
-
-}
-
-
-function updateSprites() {
-    let elapsed = 0.0;
-
-    app.ticker.add((delta) => {
-        if (changed) {
-            updateChildren();
-            changed = false;
+            this.originalSprites.set(uuid, incomingSprite);
+            // Add the new sprite to the screen or perform other actions
+            app.stage.addChild(incomingSprite);
+            incomingSprite.pivot.x = incomingSprite.width / 2;
+            incomingSprite.pivot.y = incomingSprite.height / 2;
         }
-
-        elapsed += delta;
-        sprites.forEach (sprite => {
-            if (clickX && clickY && sprite.spins) {
-                sprite.rotation = Math.atan2(clickY - sprite.y, clickX - sprite.x);
-                sprite.x = app.renderer.width / 2 + Math.cos(elapsed/(app.renderer.width / 4)) * app.renderer.width / 2.0;
-            }
-        });
-    });
+    }
 }
-
-updateSprites();
-
-
-function mouseListener() {
-
-    app.view.addEventListener('pointerdown', (event) => {
-        clickX = event.clientX - app.view.getBoundingClientRect().left;
-        clickY = event.clientY - app.view.getBoundingClientRect().top;
-
-        let sprite = PIXI.Sprite.from('./images/balloon.png');
-        sprite.y = clickY - sprite.height / 2;
-        sprite.x = clickX - sprite.width / 2;
-
-        app.stage.addChild(sprite);
-        sprites.push(sprite);
-        changed = true;
-        console.log(sprite);
-    });
-}
-
-mouseListener();
