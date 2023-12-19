@@ -8,10 +8,10 @@ import java.util.UUID;
 
 public abstract class Actor {
     private static final String DEFAULT_IMAGE = "AoPS.png";
-    private Stage stage;
 
-    // TODO Get the uuid out of here. Do not want students to see it.
-    private UUID uuid;
+    UUID uuid;
+
+    private Stage stage;
     private double x;
     private double y;
     private double rotation;
@@ -25,6 +25,7 @@ public abstract class Actor {
         this.image = image;
         uuid = UUID.randomUUID();
     }
+
 
     public void act() {}
 

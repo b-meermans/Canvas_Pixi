@@ -1,6 +1,4 @@
-package Utility;
-
-import AopsGui.Actor;
+package AopsGui;
 
 import java.util.List;
 

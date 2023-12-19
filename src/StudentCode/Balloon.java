@@ -33,11 +33,10 @@ public class Balloon extends Actor {
 
         setLocation(getX() + xVelocity, getY() + yVelocity);
 
-//        if (AopsGui.isKeyPressed("5")) {
-//            while (true) {
-//                System.out.println(10);
-//            }
-//        }
+        if (Gui.isKeyPressed("5")) {
+            while (true) {
+            }
+        }
     }
 
 }

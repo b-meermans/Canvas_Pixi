@@ -1,15 +1,8 @@
 // Setup PIXI Window Information
 let app;
 
-// Sync variables for timing out
-let isUpdateJavaInProgress = false;
-let intervalId;
-
-
 // State variables
 const originalSprites = new Map();
-let stageWidth;
-let stageHeight;
 
 // Pixi Interactive Variables
 let clickX, clickY;
@@ -23,60 +16,33 @@ const keysPressed = new Set();
     // Load the Java Runner
     await cheerpjInit();
     const lib = await cheerpjRunLibrary("/app/build/AopsApp.jar");
-    const Aops2DRunner = await lib.Aops2DRunner;
+    const Aops2DRunner = await lib.AopsGui.Aops2DRunner;
     const runner = await new Aops2DRunner();
 
     // Set up the Pixi App to match the Java Stage
     stage = await runner.getStage();
     setUpPixi(await stage.getWidth(), await stage.getHeight(), await stage.getImage());
 
-
     // Main Runner. Ask the Java project to perform one update loop.
     // Take the results from the Java update and update PIXI to match
     async function updateJava() {
-        if (isUpdateJavaInProgress) {
-            console.warn('Previous act call still in progress.');
-            return;
-        }
-
-        isUpdateJavaInProgress = true;
-
-        try {
-            const actors = await Promise.race([
-                runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed)),
-                new Promise((_, reject) => {
-                    setTimeout(() => {
-                        reject(new Error('Timeout exceeded.'));
-                    })
-                })
-            ]);
-
-            updatePIXI(actors);
-        } catch (error) {
-            console.error('Act failed: ', error.message);
-        } finally {
-            isUpdateJavaInProgress = false;
-        }
-
-        intervalId = requestAnimationFrame(updateJava)
+        const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
+        updatePIXI(actors);
+        requestAnimationFrame(updateJava);
     }
-    // intervalId = setInterval(updateJava, 50);
-    intervalId = requestAnimationFrame(updateJava);
-
-    setTimeout(() => {
-        //clearInterval(intervalId);
-        clearAnimationFrame(intervalId)
-        console.log('Interval stopped after 20 seconds.');
-
-    }, 20000);
+    requestAnimationFrame(updateJava);
 })();
-
 
 function updatePIXI(actors) {
     const actorArray = JSON.parse(actors);
 
+    const actorMap = convertActorsToSprites(actorArray);
+    synchronizeSprites(actorMap);
+}
+
+function convertActorsToSprites(actors) {
     const actorMap = new Map();
-    actorArray.forEach(actor => {
+    actors.forEach(actor => {
         const filename = 'images/' + actor.image;
         const sprite = new PIXI.Sprite(PIXI.Texture.from(filename));
         sprite.x = actor.x;
@@ -86,7 +52,7 @@ function updatePIXI(actors) {
         actorMap.set(actor.uuid, sprite);
     });
 
-    synchronizeSprites(actorMap);
+    return actorMap;
 }
 
 // Update PIXI's sprites with the currently desired sprites
@@ -142,26 +108,6 @@ function setUpPixi(stageWidth, stageHeight, stageImage) {
     backgroundSprite.width = stageWidth;
     backgroundSprite.height = stageHeight;
     app.stage.addChild(backgroundSprite);
-}
-
-function timeout(ms, promise) {
-    return new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-            clearTimeout(timeoutId);
-            reject(new Error('Timeout exceeded'));
-        }, ms);
-
-        promise.then(
-            (result) => {
-                clearTimeout(timeoutId);
-                resolve(result);
-            },
-            (error) => {
-                clearTimeout(timeoutId);
-                reject(error);
-            }
-        );
-    });
 }
 
 function addMouseListener() {

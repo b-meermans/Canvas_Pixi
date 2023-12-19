@@ -2,8 +2,6 @@ package StudentCode;
 
 import AopsGui.Stage;
 
-import java.awt.*;
-
 public class MyStage extends Stage {
 
     public MyStage() {

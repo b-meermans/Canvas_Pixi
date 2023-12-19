@@ -9,7 +9,9 @@ console.log = function(message) {
     originalConsoleLog.apply(console, arguments);
 
     // Append the message to the log output textarea
-    logOutput.value += message;
+    if (message !== 'CheerpJ runtime ready') {
+        logOutput.value += message;
+    }
 
     // Optionally, scroll to the bottom of the textarea to show the latest logs
     logOutput.scrollTop = logOutput.scrollHeight;

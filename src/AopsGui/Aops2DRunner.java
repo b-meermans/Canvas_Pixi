@@ -1,6 +1,6 @@
-import AopsGui.*;
+package AopsGui;
+
 import StudentCode.*;
-import Utility.JsonConversion;
 
 public class Aops2DRunner {
 
@@ -19,7 +19,6 @@ public class Aops2DRunner {
         for (Actor actor : stage.getActors()) {
             actor.act();
         }
-
 
         return JsonConversion.getActorJason(stage.getActors());
     }

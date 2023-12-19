@@ -5,9 +5,13 @@ import AopsGui.Gui;
 
 public class ImageChanger extends Actor {
     private String[] images = {"balloon.png", "plane.png", "AoPS.png"};
-    private static final long MIN_TIME_CHANGE = 1000;
+    private static final long MIN_TIME_CHANGE = 100;
     private int currentIndex;
     private long lastUpdate = System.currentTimeMillis();
+
+    public ImageChanger() {
+        setImage(images[currentIndex]);
+    }
 
     public void act() {
         if (System.currentTimeMillis() - lastUpdate < MIN_TIME_CHANGE) {

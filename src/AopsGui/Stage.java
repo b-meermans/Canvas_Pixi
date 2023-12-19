@@ -1,9 +1,5 @@
 package AopsGui;
 
-import StudentCode.CircleMover;
-import StudentCode.Follower;
-import StudentCode.Walker;
-
 import java.util.ArrayList;
 import java.util.List;
 
