@@ -1,7 +1,7 @@
 package StudentCode;
 
 import AopsGui.Actor;
-import AopsGui.AopsGui;
+import AopsGui.Gui;
 
 public class Balloon extends Actor {
 
@@ -16,15 +16,15 @@ public class Balloon extends Actor {
     }
 
     public void act() {
-        if (AopsGui.isKeyPressed("up")) {
+        if (Gui.isKeyPressed("up")) {
             yVelocity -= ACCELERATION;
         }
 
-        if (AopsGui.isKeyPressed("right")) {
+        if (Gui.isKeyPressed("right")) {
             xVelocity += ACCELERATION;
         }
 
-        if (AopsGui.isKeyPressed("left")) {
+        if (Gui.isKeyPressed("left")) {
             xVelocity -= ACCELERATION;
         }
 
@@ -32,6 +32,12 @@ public class Balloon extends Actor {
         xVelocity *= FRICTION;
 
         setLocation(getX() + xVelocity, getY() + yVelocity);
+
+//        if (AopsGui.isKeyPressed("5")) {
+//            while (true) {
+//                System.out.println(10);
+//            }
+//        }
     }
 
 }

@@ -11,8 +11,8 @@ public class Aops2DRunner {
     }
 
     public String act(double mouseX, double mouseY, boolean isMousePressed, String[] keysPressed) {
-        AopsGui.updateKeys(keysPressed);
-        AopsGui.updateMouse(mouseX, mouseY, isMousePressed);
+        Gui.updateKeys(keysPressed);
+        Gui.updateMouse(mouseX, mouseY, isMousePressed);
 
         stage.act();
 

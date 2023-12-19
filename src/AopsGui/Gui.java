@@ -2,7 +2,7 @@ package AopsGui;
 
 import java.util.*;
 
-public class AopsGui {
+public class Gui {
     private static double mouseX;
     private static double mouseY;
 
@@ -11,9 +11,9 @@ public class AopsGui {
     private static final Set<String> keysPressed = new HashSet<>();
 
     public static void updateMouse(double x, double y, boolean isMousePressed) {
-        AopsGui.mouseX = x;
-        AopsGui.mouseY = y;
-        AopsGui.isMousePressed = isMousePressed;
+        Gui.mouseX = x;
+        Gui.mouseY = y;
+        Gui.isMousePressed = isMousePressed;
     }
 
     public static double getMouseX() {

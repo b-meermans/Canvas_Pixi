@@ -1,6 +1,10 @@
 // Setup PIXI Window Information
 let app;
 
+// Sync variables for timing out
+let isUpdateJavaInProgress = false;
+let intervalId;
+
 
 // State variables
 const originalSprites = new Map();
@@ -30,41 +34,41 @@ const keysPressed = new Set();
     // Main Runner. Ask the Java project to perform one update loop.
     // Take the results from the Java update and update PIXI to match
     async function updateJava() {
-        try {
-            // Get one update from Java
-            const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
-            updatePIXI(actors);
-
-//            // Convert the Java list of Actors into a map of Sprites
-//            // This uses a lot of awaits to get individual properties - current version uses JSON
-//            const javaActors = new Map();
-//            for (let i = 0; i < size; i++) {
-//                const actor = await actors.get(i);
-//                const x = await actor.getX();
-//                const y = await actor.getY();
-//                const rotation = await actor.getRotation();
-//                const id = await actor.getID();
-//                let image = "images/" + await actor.getImage();
-//                if (image === 'images/AoPS.png') {
-//                    image = 'images/balloon.png';
-//                }
-//                const sprite = PIXI.Sprite.from(image);
-//
-//                sprite.id = id;
-//                sprite.x = x;
-//                sprite.y = y;
-//                sprite.rotation = rotation;
-//                sprite.image = image;
-//                javaActors.set(id, sprite);
-//            }
-//
-//            // Sync up the results from Java onto PixiJS
-//            synchronizeSprites(actorMap);
-        } catch (error) {
-            // console.error(error);
+        if (isUpdateJavaInProgress) {
+            console.warn('Previous act call still in progress.');
+            return;
         }
+
+        isUpdateJavaInProgress = true;
+
+        try {
+            const actors = await Promise.race([
+                runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed)),
+                new Promise((_, reject) => {
+                    setTimeout(() => {
+                        reject(new Error('Timeout exceeded.'));
+                    })
+                })
+            ]);
+
+            updatePIXI(actors);
+        } catch (error) {
+            console.error('Act failed: ', error.message);
+        } finally {
+            isUpdateJavaInProgress = false;
+        }
+
+        intervalId = requestAnimationFrame(updateJava)
     }
-    setInterval(updateJava, 20);
+    // intervalId = setInterval(updateJava, 50);
+    intervalId = requestAnimationFrame(updateJava);
+
+    setTimeout(() => {
+        //clearInterval(intervalId);
+        clearAnimationFrame(intervalId)
+        console.log('Interval stopped after 20 seconds.');
+
+    }, 20000);
 })();
 
 
@@ -138,14 +142,26 @@ function setUpPixi(stageWidth, stageHeight, stageImage) {
     backgroundSprite.width = stageWidth;
     backgroundSprite.height = stageHeight;
     app.stage.addChild(backgroundSprite);
+}
 
-//
-//    PIXI.Loader.shared.add('background', filename).load(() => {
-//      const backgroundSprite = new PIXI.Sprite(PIXI.Texture.from('background'));
-//      backgroundSprite.x = 0;
-//      backgroundSprite.y = 0;
-//      app.stage.addChild(backgroundSprite);
-//    });
+function timeout(ms, promise) {
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            clearTimeout(timeoutId);
+            reject(new Error('Timeout exceeded'));
+        }, ms);
+
+        promise.then(
+            (result) => {
+                clearTimeout(timeoutId);
+                resolve(result);
+            },
+            (error) => {
+                clearTimeout(timeoutId);
+                reject(error);
+            }
+        );
+    });
 }
 
 function addMouseListener() {
@@ -178,3 +194,4 @@ function addKeyboardListener() {
 function simplifyKeyEventName(event) {
     return event.code.replace(/Digit|Key|Arrow/g, '').toUpperCase();
 }
+

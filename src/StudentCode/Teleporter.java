@@ -5,8 +5,8 @@ import AopsGui.*;
 public class Teleporter extends Actor {
 
     public void act() {
-        if (AopsGui.isMousePressed()) {
-            setLocation(AopsGui.getMouseX(), AopsGui.getMouseY());
+        if (Gui.isMousePressed()) {
+            setLocation(Gui.getMouseX(), Gui.getMouseY());
         }
     }
 }

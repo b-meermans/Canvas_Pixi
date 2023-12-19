@@ -3,11 +3,11 @@ import AopsGui.*;
 
 public class Follower extends Actor {
     public void act() {
-        double xDif = getX() - AopsGui.getMouseX();
-        double yDif = getY() - AopsGui.getMouseY();
+        double xDif = getX() - Gui.getMouseX();
+        double yDif = getY() - Gui.getMouseY();
 
         if (Math.sqrt(xDif * xDif + yDif * yDif) > 1) {
-            turnTowards(AopsGui.getMouseX(), AopsGui.getMouseY());
+            turnTowards(Gui.getMouseX(), Gui.getMouseY());
             move(1);
         }
 

@@ -1,7 +1,7 @@
 package StudentCode;
 
 import AopsGui.Actor;
-import AopsGui.AopsGui;
+import AopsGui.Gui;
 
 public class ImageChanger extends Actor {
     private String[] images = {"balloon.png", "plane.png", "AoPS.png"};
@@ -14,9 +14,9 @@ public class ImageChanger extends Actor {
             return;
         }
 
-        if (AopsGui.isKeyPressed("1")) {
+        if (Gui.isKeyPressed("1")) {
             changeImage(currentIndex + 1);
-        } else if (AopsGui.isKeyPressed("2")) {
+        } else if (Gui.isKeyPressed("2")) {
             changeImage(currentIndex - 1);
         }
     }

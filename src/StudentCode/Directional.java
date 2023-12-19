@@ -1,25 +1,25 @@
 package StudentCode;
 
 import AopsGui.Actor;
-import AopsGui.AopsGui;
+import AopsGui.Gui;
 
 public class Directional extends Actor {
     public void act() {
-        if (AopsGui.isKeyPressed("SPACE")) {
+        if (Gui.isKeyPressed("SPACE")) {
             move(30);
         }
 
 
-        if (AopsGui.isKeyPressed("up")) {
+        if (Gui.isKeyPressed("up")) {
             setLocation(getX(), getY() - 1);
         }
-        if (AopsGui.isKeyPressed("DowN")) {
+        if (Gui.isKeyPressed("DowN")) {
             setLocation(getX(), getY() + 1);
         }
-        if (AopsGui.isKeyPressed("lefT")) {
+        if (Gui.isKeyPressed("lefT")) {
             setLocation(getX() - 1, getY());
         }
-        if (AopsGui.isKeyPressed("RIGHT")) {
+        if (Gui.isKeyPressed("RIGHT")) {
             setLocation(getX() + 1, getY());
         }
     }

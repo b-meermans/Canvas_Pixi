@@ -9,7 +9,7 @@ public class MyStage extends Stage {
     public MyStage() {
         super(800, 600, "sky.png");
 
-        for (int i = 0; i < getHeight(); i += getHeight() / 10.0) {
+        for (int i = 0; i < getHeight() / 3; i += getHeight() / 10.0) {
             for (int j = 0; j <= getWidth(); j+= getWidth() / 10.0) {
                 addActor(new Walker(), j, i);
 
