@@ -2,10 +2,6 @@ package StudentCode;
 import AopsGui.*;
 
 public class Follower extends Actor {
-    public Follower(int x, int y) {
-        super(x, y);
-    }
-
     public void act() {
         double xDif = getX() - AopsGui.getMouseX();
         double yDif = getY() - AopsGui.getMouseY();

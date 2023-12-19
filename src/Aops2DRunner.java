@@ -1,7 +1,6 @@
 import AopsGui.*;
 import StudentCode.*;
-
-import java.util.List;
+import Utility.JsonConversion;
 
 public class Aops2DRunner {
 
@@ -11,29 +10,21 @@ public class Aops2DRunner {
         stage = new MyStage();
     }
 
-    public void act(double mouseX, double mouseY, String[] keysPressed) {
-
-        for (String key : keysPressed) {
-            System.out.println(key);
-        }
-        AopsGui.updateMouse(mouseX, mouseY);
+    public String act(double mouseX, double mouseY, boolean isMousePressed, String[] keysPressed) {
+        AopsGui.updateKeys(keysPressed);
+        AopsGui.updateMouse(mouseX, mouseY, isMousePressed);
 
         stage.act();
 
         for (Actor actor : stage.getActors()) {
             actor.act();
         }
+
+
+        return JsonConversion.getActorJason(stage.getActors());
     }
 
-    public List<Actor> getActors() {
-        return stage.getActors();
-    }
-
-    public static double getMouseX() {
-        return AopsGui.getMouseX();
-    }
-
-    public static double getMouseY() {
-        return AopsGui.getMouseY();
+    public Stage getStage() {
+        return stage;
     }
 }

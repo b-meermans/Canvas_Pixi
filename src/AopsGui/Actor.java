@@ -17,14 +17,13 @@ public abstract class Actor {
     private double rotation;
     private String image;
 
-    public Actor(double x, double y) {
-        this(x, y, DEFAULT_IMAGE);
+    public Actor() {
+        this(DEFAULT_IMAGE);
     }
-    public Actor(double x, double y, String image) {
-        uuid = UUID.randomUUID();
-        this.x = x;
-        this.y = y;
+
+    public Actor(String image) {
         this.image = image;
+        uuid = UUID.randomUUID();
     }
 
     public void act() {}
@@ -73,6 +72,18 @@ public abstract class Actor {
 
     public void setRotation(double rotation) {
         this.rotation = rotation;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     public boolean equals(Object o) {

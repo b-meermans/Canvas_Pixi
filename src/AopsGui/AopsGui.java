@@ -1,19 +1,19 @@
 package AopsGui;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class AopsGui {
     private static double mouseX;
     private static double mouseY;
 
+    private static boolean isMousePressed;
+
     private static final Set<String> keysPressed = new HashSet<>();
 
-
-    public static void updateMouse(double x, double y) {
+    public static void updateMouse(double x, double y, boolean isMousePressed) {
         AopsGui.mouseX = x;
         AopsGui.mouseY = y;
+        AopsGui.isMousePressed = isMousePressed;
     }
 
     public static double getMouseX() {
@@ -24,16 +24,16 @@ public class AopsGui {
         return mouseY;
     }
 
+    public static boolean isMousePressed() {
+        return isMousePressed;
+    }
+
     public static void updateKeys(String[] keys) {
         keysPressed.clear();
-        keysPressed.addAll(Arrays.asList(keys));
+        Collections.addAll(keysPressed, keys);
     }
 
     public static boolean isKeyPressed(String key) {
-        if (key.equals(" ")) {
-            key = "space";
-        }
-
-        return keysPressed.contains(key.toLowerCase());
+        return keysPressed.contains(key.toUpperCase());
     }
 }
