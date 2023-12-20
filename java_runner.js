@@ -11,11 +11,20 @@ let mouseY = 0;
 let isMouseDown = false;
 const keysPressed = new Set();
 
+let loaded = false;
+let lib;
 
-(async function () {
-    // Load the Java Runner
-    await cheerpjInit();
-    const lib = await cheerpjRunLibrary("/app/build/AopsApp.jar");
+async function loadPIXI() {
+    if (app) {
+        app.destroy(true);
+    }
+
+    if (!loaded) {
+        await cheerpjInit();
+        loaded = true;
+        lib = await cheerpjRunLibrary("/app/build/AopsApp.jar");
+    }
+
     const Aops2DRunner = await lib.AopsGui.Aops2DRunner;
     const runner = await new Aops2DRunner();
 
@@ -23,15 +32,17 @@ const keysPressed = new Set();
     stage = await runner.getStage();
     setUpPixi(await stage.getWidth(), await stage.getHeight(), await stage.getImage());
 
-    // Main Runner. Ask the Java project to perform one update loop.
-    // Take the results from the Java update and update PIXI to match
-    async function updateJava() {
-        const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
-        updatePIXI(actors);
-        requestAnimationFrame(updateJava);
-    }
-    requestAnimationFrame(updateJava);
-})();
+    requestAnimationFrame(() => updateJava(runner));
+}
+
+loadPIXI();
+
+// Asks for the Java actor details, then asks to update PIXI to match
+async function updateJava(runner) {
+    const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
+    updatePIXI(actors);
+    requestAnimationFrame(() => updateJava(runner));
+}
 
 function updatePIXI(actors) {
     const actorArray = JSON.parse(actors);
@@ -91,7 +102,6 @@ function synchronizeSprites(incomingSprites) {
         }
     }
 }
-
 
 function setUpPixi(stageWidth, stageHeight, stageImage) {
     app = new PIXI.Application({
