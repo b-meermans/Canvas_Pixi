@@ -21,7 +21,22 @@ console.log = function(message) {
 function clearLog() {
     // Clear the content of the log output textarea
     logOutput.value = '';
-    var pixiIframe = parent.document.getElementById('pixi-iframe');
+
+    focusToPIXI();
+}
+
+function toggleTextArea() {
+    const textareaContainer = document.getElementById('collapsibleTextArea');
+    const toggleTextAreaButton = document.getElementById('toggleTextAreaButton');
+
+    textareaContainer.classList.toggle('expanded');
+    toggleTextAreaButton.textContent = (textareaContainer.classList.contains('expanded') ? '▼' : '▲');
+
+    focusToPIXI();
+}
+
+function focusToPIXI() {
+    const pixiIframe = parent.document.getElementById('pixi-iframe');
     if (pixiIframe) {
         pixiIframe.focus();
     }

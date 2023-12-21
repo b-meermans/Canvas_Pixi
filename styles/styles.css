@@ -1,3 +1,11 @@
+:root {
+  --button-color: #2E86C1;
+  --button-hover-color: #55c2da;;
+  --button-disabled-color: #AAB7B8;
+  --button-clear-color: #909497;
+  --button-text-color: #FFF;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -6,6 +14,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  overflow: hidden;
 }
 
 #textarea-container {
@@ -13,35 +22,37 @@ body {
   margin-bottom: 20px;
 }
 
-#clear-button {
+#pixi-container {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  z-index: 1;
+  top: calc(33vh - 50%);
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-#pixi-container {
-  position: relative;
+#pixi-iframe {
+  border: 0;
+  width: 800px;
+  height: 600px;
 }
 
 #pixi-buttons {
-  position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 10px;
   z-index: 1000;
 }
 
-
 #pixi-buttons button {
-  flex: 0 0 auto;
   width: 80px;
   padding: 10px;
-  background-color: #2E86C1;
-  color: #fff;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -50,14 +61,15 @@ body {
 }
 
 #pixi-buttons button:not(:disabled):hover {
-  background-color: #55c2da;
+  background-color:  var(--button-hover-color);
 }
 
 #pixi-buttons button:disabled {
   cursor: not-allowed;
-  background-color: #AAB7B8;
-  color: #FDFEFE;
+  background-color: var(--button-disabled-color);
+  color: var(--button-text-color);
 }
+
 
 #collapsibleContainer {
   position: fixed;
@@ -65,7 +77,7 @@ body {
   left: 0;
   height: 100vh;
   width: 15px;
-  background-color: #2E86C1;
+  background-color: var(--button-color);
   overflow-x: hidden;
   transition: width 0.3s ease;
   z-index: 1000;
@@ -76,7 +88,7 @@ body {
 }
 
 #collapsibleContainer:hover {
-  background-color: #55c2da;
+  background-color:  var(--button-hover-color);
 }
 
 #collapsibleContainer.expanded {
@@ -92,7 +104,7 @@ body {
   left: 100%;
   transform: translate(-90%, -50%);
   font-size: 18px;
-  color: #fff;
+  color: var(--button-text-color);
   border-radius: 0 5px 5px 0; /* Adjust border-radius for a nice transition */
   transition: background-color 0.3s ease;
   box-sizing: border-box;
@@ -134,16 +146,71 @@ body {
   resize: none; /* Disable textarea resizing */
 }
 
+#collapsibleTextAreaContainer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    overflow: visible;
+}
+
+#collapsibleTextArea {
+    background-color:  var(--button-color);
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    max-height: 50px;
+    transition: max-height 0.3s ease;
+    z-index: 1001;
+    position: relative;
+}
+
+#collapsibleTextArea.expanded {
+    max-height: 800px;
+}
+
+#toggleTextAreaButton {
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--button-text-color);
+    background-color:  var(--button-color);
+    border: none;
+    border-radius: 5px 5px 0 0;
+    padding: 10px 15px;
+    transition: background-color 0.3s ease;
+    outline: none;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#toggleTextAreaButton:hover {
+    background-color:  var(--button-hover-color);
+}
+
 #clear-button {
-  cursor: pointer;
-  padding: 10px 15px;
-  background-color: #2E86C1;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+    cursor: pointer;
+    padding: 10px 15px;
+    background-color: var(--button-clear-color);
+    padding: 10px 15px;
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    position: absolute;
+    transition: background-color 0.3s ease;
 }
 
 #clear-button:hover {
-  background-color: #55c2da;
+  background-color:  var(--button-hover-color);
+}
+
+
+#log-output {
+    font-family: "DejaVu Sans Mono", monospace;
 }

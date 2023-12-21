@@ -15,10 +15,14 @@
             <div id="imageContainer" class="vertical-container"></div>
         </div>
 
-        <div id="textarea-container">
-            <textarea id="log-output" rows="10" cols="97" readonly></textarea>
-            <button id="clear-button" onclick="clearLog()">Clear</button>
+        <div id="collapsibleTextAreaContainer">
+            <div id="collapsibleTextArea">
+                <textarea id="log-output" rows="30" cols="97" readonly></textarea>
+                <button id="toggleTextAreaButton" onclick="toggleTextArea()">▲</button>
+                <button id="clear-button" onclick="clearLog()">Clear</button>
+            </div>
         </div>
+
 
         <div id="pixi-container">
             <iframe id="pixi-iframe" src="pixi.html" width="800" height="600" frameborder="0" scrolling="no"></iframe>

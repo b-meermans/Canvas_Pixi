@@ -34,7 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
   collapsibleContainer.addEventListener('click', function () {
     imageContainer.style.display = (imageContainer.style.display === 'none') ? 'flex' : 'none';
     collapsibleContainer.classList.toggle('expanded');
-    toggleButton.textContent = (imageContainer.style.display === 'none') ? '►' : '◄';
+    toggleButton.textContent = collapsibleContainer.classList.contains('expanded') ? '◄' : '►';
+    focusToPIXI();
   });
 });
 
+function focusToPIXI() {
+    const pixiIframe = parent.document.getElementById('pixi-iframe');
+    if (pixiIframe) {
+        pixiIframe.focus();
+    }
+}
