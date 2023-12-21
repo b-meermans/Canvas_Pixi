@@ -21,4 +21,8 @@ console.log = function(message) {
 function clearLog() {
     // Clear the content of the log output textarea
     logOutput.value = '';
+    var pixiIframe = parent.document.getElementById('pixi-iframe');
+    if (pixiIframe) {
+        pixiIframe.focus();
+    }
 }

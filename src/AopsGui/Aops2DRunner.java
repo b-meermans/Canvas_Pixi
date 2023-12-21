@@ -26,4 +26,8 @@ public class Aops2DRunner {
     public Stage getStage() {
         return stage;
     }
+
+    public String getActors() {
+        return JsonConversion.getActorJason(stage.getActors());
+    }
 }

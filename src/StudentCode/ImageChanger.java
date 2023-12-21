@@ -34,6 +34,6 @@ public class ImageChanger extends Actor {
         currentIndex = index;
 
         lastUpdate = System.currentTimeMillis();
-
+        System.out.println("Current image: " + currentIndex);
     }
 }

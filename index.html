@@ -5,34 +5,34 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Gui Demo</title>
-        <script src="https://pixijs.download/release/pixi.js"></script>
+        <link rel="stylesheet" type="text/css" href="styles/styles.css">
 
-        <style>
-            #pixi-container {
-                position: relative;
-            }
-
-            canvas {
-                display: block;
-            }
-
-            #reload-button {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                z-index: 2;
-            }
-        </style>
     </head>
+
     <body>
-        <div id="pixi-container">
-            <button id="reload-button" onclick="loadPIXI()">Reload GUI</button>
+        <div id="collapsibleContainer">
+            <div id="toggleButton">&#9654;</div>
+            <div id="imageContainer" class="vertical-container"></div>
         </div>
 
-        <textarea id="log-output" rows="15" cols="97"></textarea>
-        <button onclick="clearLog()">Clear</button>
-        <script src="console_output.js"></script>
+        <div id="textarea-container">
+            <textarea id="log-output" rows="10" cols="97" readonly></textarea>
+            <button id="clear-button" onclick="clearLog()">Clear</button>
+        </div>
+
+        <div id="pixi-container">
+            <iframe id="pixi-iframe" src="pixi.html" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+            <div id="pixi-buttons">
+                <button id="stepButton" onclick="step()">Step</button>
+                <button id="runPauseButton" onclick="toggleRun()">Run</button>
+                <button onclick="reset()">Reset</button>
+            </div>
+        </div>
+
         <script src="https://cjrtnc.leaningtech.com/3_20231218_321/cj3loader.js"></script>
-        <script src="java_runner.js"></script>
+        <script src="javascript/console_output.js"></script>
+        <script src="javascript/java_runner.js"></script>
+        <script src="javascript/collapsible_images.js"></script>
+
     </body>
 </html>

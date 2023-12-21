@@ -1,0 +1,149 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#textarea-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+#clear-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
+}
+
+#pixi-container {
+  position: relative;
+}
+
+#pixi-buttons {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 1000;
+}
+
+
+#pixi-buttons button {
+  flex: 0 0 auto;
+  width: 80px;
+  padding: 10px;
+  background-color: #2E86C1;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  outline: none;
+}
+
+#pixi-buttons button:not(:disabled):hover {
+  background-color: #55c2da;
+}
+
+#pixi-buttons button:disabled {
+  cursor: not-allowed;
+  background-color: #AAB7B8;
+  color: #FDFEFE;
+}
+
+#collapsibleContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 15px;
+  background-color: #2E86C1;
+  overflow-x: hidden;
+  transition: width 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+#collapsibleContainer:hover {
+  background-color: #55c2da;
+}
+
+#collapsibleContainer.expanded {
+  width: 200px;
+}
+
+#toggleButton {
+  cursor: pointer;
+  position: absolute;
+  border: none;
+  font-size: 18px;
+  top: 50%;
+  left: 100%;
+  transform: translate(-90%, -50%);
+  font-size: 18px;
+  color: #fff;
+  border-radius: 0 5px 5px 0; /* Adjust border-radius for a nice transition */
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+  z-index: 1001;
+}
+
+#imageContainer {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+#imageContainer.vertical-container {
+  flex-direction: column;
+}
+
+.imageItem {
+  margin: 10px;
+  text-align: center;
+}
+
+.imageItem img {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+#textarea-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#log-output {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: none; /* Disable textarea resizing */
+}
+
+#clear-button {
+  cursor: pointer;
+  padding: 10px 15px;
+  background-color: #2E86C1;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#clear-button:hover {
+  background-color: #55c2da;
+}

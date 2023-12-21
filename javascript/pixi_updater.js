@@ -1,5 +1,3 @@
-// Setup PIXI Window Information
-let app;
 
 // State variables
 const originalSprites = new Map();
@@ -11,37 +9,95 @@ let mouseY = 0;
 let isMouseDown = false;
 const keysPressed = new Set();
 
-let loaded = false;
-let lib;
+// Setup PIXI Window Information
+let app;
+let runner;
+let isRunning = false;
+
+window.addEventListener('message', function (event) {
+  if (event.data && event.data.action === 'loadPIXI') {
+      loadPIXI()
+      .then(result => {
+        window.parent.postMessage({ action: 'loadPIXI', result: result }, '*');
+      })
+      .catch(error => {
+            console.error('Error in async method:', error);
+      });
+  } else if (event.data && event.data.action === 'stepPIXI') {
+      stepPIXI()
+      .then(result => {
+        window.parent.postMessage({ action: 'stepPIXI', result: result }, '*');
+      })
+      .catch(error => {
+            console.error('Error in async method:', error);
+      });
+    } else if (event.data && event.data.action === 'toggleRun') {
+      toggleRun()
+      .then(result => {
+        window.parent.postMessage({ action: 'toggleRun', result: result }, '*');
+      })
+      .catch(error => {
+            console.error('Error in async method:', error);
+      });
+    }
+});
 
 async function loadPIXI() {
-    if (app) {
-        app.destroy(true);
+    destroyCurrentPixi();
+    originalSprites.clear();
+    isRunning = false;
+
+    let lib;
+    if (window.parent && window.parent.getLib) {
+        lib = window.parent.getLib();
     }
 
-    if (!loaded) {
-        await cheerpjInit();
-        loaded = true;
-        lib = await cheerpjRunLibrary("/app/build/AopsApp.jar");
+    if (!lib) {
+        console.error("The CheerpJ library was not available");
     }
 
     const Aops2DRunner = await lib.AopsGui.Aops2DRunner;
-    const runner = await new Aops2DRunner();
+    runner = await new Aops2DRunner();
 
     // Set up the Pixi App to match the Java Stage
-    stage = await runner.getStage();
-    setUpPixi(await stage.getWidth(), await stage.getHeight(), await stage.getImage());
+    const javaStage = await runner.getStage();
+    setUpPixi(await javaStage.getWidth(), await javaStage.getHeight(), await javaStage.getImage());
 
-    requestAnimationFrame(() => updateJava(runner));
+    updatePIXI(await runner.getActors());
+    updatePIXI(await runner.getActors());
 }
 
-loadPIXI();
+window.addEventListener('unhandledrejection', function (event) {
+  event.preventDefault();
+}, false);
 
-// Asks for the Java actor details, then asks to update PIXI to match
-async function updateJava(runner) {
+async function runPIXI() {
+    stepPIXI();
+    if (isRunning) {
+        requestAnimationFrame(() => runPIXI());
+    }
+}
+
+async function toggleRun() {
+    isRunning = !isRunning;
+    if (isRunning) {
+        var pixiIframe = parent.document.getElementById('pixi-iframe');
+        if (pixiIframe) {
+            pixiIframe.focus();
+        }
+        runPIXI();
+    }
+}
+
+async function stepPIXI() {
     const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
     updatePIXI(actors);
-    requestAnimationFrame(() => updateJava(runner));
+}
+
+function destroyCurrentPixi() {
+    if (app) {
+        app.destroy(true);
+    }
 }
 
 function updatePIXI(actors) {
@@ -82,23 +138,24 @@ function synchronizeSprites(incomingSprites) {
         if (originalSprites.has(uuid)) {
             // Old sprite - update it.
             const originalSprite = originalSprites.get(uuid);
+            if (originalSprite.image !== incomingSprite.image) {
+                originalSprite.texture = PIXI.Texture.from(incomingSprite.image);
+                originalSprite.image = incomingSprite.image;
+            }
+
             originalSprite.x = incomingSprite.x;
             originalSprite.y = incomingSprite.y;
             originalSprite.pivot.x = incomingSprite.width / 2;
             originalSprite.pivot.y = incomingSprite.height / 2;
             originalSprite.rotation = incomingSprite.rotation;
-            if (originalSprite.image !== incomingSprite.image) {
-                originalSprite.texture = PIXI.Texture.from(incomingSprite.image)
-                originalSprite.image = incomingSprite.image;
-                originalSprite.pivot.x = originalSprite.width / 2;
-                originalSprite.pivot.y = originalSprite.height / 2;
-            }
         } else {
             // New sprite
-            originalSprites.set(uuid, incomingSprite);
+            incomingSprite.texture.on('update', () => {
+                incomingSprite.pivot.y = incomingSprite.height / 2;
+                incomingSprite.pivot.x = incomingSprite.width / 2;
+            });
             app.stage.addChild(incomingSprite);
-            incomingSprite.pivot.x = incomingSprite.width / 2;
-            incomingSprite.pivot.y = incomingSprite.height / 2;
+            originalSprites.set(uuid, incomingSprite);
         }
     }
 }
@@ -150,4 +207,3 @@ function addKeyboardListener() {
 function simplifyKeyEventName(event) {
     return event.code.replace(/Digit|Key|Arrow/g, '').toUpperCase();
 }
-
