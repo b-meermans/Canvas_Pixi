@@ -26,10 +26,10 @@ public class ImageChanger extends Actor {
     }
 
     public void changeImage(int index) {
-        if (index < 0) {
-            index = images.length - 1;
-        }
-        index %= images.length;
+//        if (index < 0) {
+//            index = images.length - 1;
+//        }
+//        index %= images.length;
         setImage(images[index]);
         currentIndex = index;
 

@@ -14,10 +14,16 @@ public class Aops2DRunner {
         Gui.updateKeys(keysPressed);
         Gui.updateMouse(mouseX, mouseY, isMousePressed);
 
-        stage.act();
+        try {
+            stage.act();
 
-        for (Actor actor : stage.getActors()) {
-            actor.act();
+            for (Actor actor : stage.getActors()) {
+
+                    actor.act();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
 
         return JsonConversion.getActorJason(stage.getActors());
