@@ -89,6 +89,44 @@ async function toggleRun() {
     }
 }
 
+//let worker = new Worker("./path/to/worker.js")
+//worker.onmessage = (message) => {
+//    let data = message.data  // { type: "runner.act", actors: ... }
+//
+//    if (data.type === "runner.act") {
+//        let actors = data.actors
+//
+//        updatePIXI(actors)
+//    }
+//}
+//
+//worker.terminate()
+//
+//worker.postMessage({
+//    type: "runner.act",
+//    mouseX,
+//    mouseY,
+//    isMouseDown,
+//    ...
+//})
+//
+///**
+//Worker code
+//*/
+//
+//globalThis.onmessage = (message) => {
+//    let data = message.data
+//
+//    if (data.type === "runner.act") {
+//        let actors = runner.act( ... )
+//
+//        postMessage({
+//            type: "runner.act",
+//            actors: actors
+//        })
+//    }
+//}
+
 async function stepPIXI() {
     const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
 
