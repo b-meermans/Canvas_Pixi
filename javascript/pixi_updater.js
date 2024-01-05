@@ -43,6 +43,7 @@ window.addEventListener('message', function (event) {
 });
 
 async function loadPIXI() {
+
     destroyCurrentPixi();
     originalSprites.clear();
     isRunning = false;
@@ -65,6 +66,8 @@ async function loadPIXI() {
 
     updatePIXI(await runner.getActors());
     updatePIXI(await runner.getActors());
+
+    new Audio('sounds/incorrect.mp3').play();
 }
 
 window.addEventListener('unhandledrejection', function (event) {
@@ -79,6 +82,8 @@ async function runPIXI() {
 }
 
 async function toggleRun() {
+    new Audio('sounds/correct.mp3').play();
+
     isRunning = !isRunning;
     if (isRunning) {
         var pixiIframe = parent.document.getElementById('pixi-iframe');
