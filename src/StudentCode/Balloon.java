@@ -1,6 +1,7 @@
 package StudentCode;
 
 import AopsGui.Actor;
+import AopsGui.Aops2DRunner;
 import AopsGui.Gui;
 
 public class Balloon extends Actor {
@@ -34,9 +35,18 @@ public class Balloon extends Actor {
         setLocation(getX() + xVelocity, getY() + yVelocity);
 
         if (Gui.isKeyPressed("5")) {
-            while (true) {
+            while (true) {Aops2DRunner.exitIfNeeded();
             }
         }
+
+        if (Gui.isKeyPressed("6")) {
+            recur();
+        }
     }
+
+    public void recur() {Aops2DRunner.addMethodToStack();
+        recur();
+
+    Aops2DRunner.removeMethodFromStack();}
 
 }

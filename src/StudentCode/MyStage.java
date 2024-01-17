@@ -20,6 +20,7 @@ public class MyStage extends Stage {
         addActor(new Teleporter(), 0, 0);
         addActor(new ImageChanger(), 50, 500);
         addActor(new Balloon(), getWidth() / 2.0, getHeight() / 2.0);
+        addActor(new BrokenPen(), 0, 0);
 
 
     }

@@ -8,11 +8,13 @@ let mouseX = 0;
 let mouseY = 0;
 let isMouseDown = false;
 const keysPressed = new Set();
+let fullSize = true;
 
 // Setup PIXI Window Information
 let app;
 let runner;
 let isRunning = false;
+let currentScale = 1;
 
 window.addEventListener('message', function (event) {
   if (event.data && event.data.action === 'loadPIXI') {
@@ -93,44 +95,6 @@ async function toggleRun() {
         runPIXI();
     }
 }
-
-//let worker = new Worker("./path/to/worker.js")
-//worker.onmessage = (message) => {
-//    let data = message.data  // { type: "runner.act", actors: ... }
-//
-//    if (data.type === "runner.act") {
-//        let actors = data.actors
-//
-//        updatePIXI(actors)
-//    }
-//}
-//
-//worker.terminate()
-//
-//worker.postMessage({
-//    type: "runner.act",
-//    mouseX,
-//    mouseY,
-//    isMouseDown,
-//    ...
-//})
-//
-///**
-//Worker code
-//*/
-//
-//globalThis.onmessage = (message) => {
-//    let data = message.data
-//
-//    if (data.type === "runner.act") {
-//        let actors = runner.act( ... )
-//
-//        postMessage({
-//            type: "runner.act",
-//            actors: actors
-//        })
-//    }
-//}
 
 async function stepPIXI() {
     const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
@@ -215,6 +179,11 @@ function setUpPixi(stageWidth, stageHeight, stageImage) {
         height: stageHeight
     });
 
+    currentScale = 1;
+
+    app.stage.originalWidth = stageWidth;
+    app.stage.originalHeight = stageHeight;
+
     document.body.appendChild(app.view);
     addMouseListener();
     addKeyboardListener();
@@ -228,8 +197,12 @@ function setUpPixi(stageWidth, stageHeight, stageImage) {
 
 function addMouseListener() {
     app.view.addEventListener('pointermove', (event) => {
-        mouseX = event.clientX - app.view.getBoundingClientRect().left;
-        mouseY = event.clientY - app.view.getBoundingClientRect().top;
+        const relativeMouseX = event.clientX - app.view.getBoundingClientRect().left;
+        const relativeMouseY = event.clientY - app.view.getBoundingClientRect().top;
+
+        const scaledMouse = app.stage.toLocal(new PIXI.Point(relativeMouseX, relativeMouseY));
+        mouseX = scaledMouse.x;
+        mouseY = scaledMouse.y;
     });
 
     app.view.addEventListener('pointerdown', () => {
@@ -252,6 +225,28 @@ function addKeyboardListener() {
         keysPressed.delete(keyCode);
     });
 }
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === '-') {
+        currentScale *= 0.9;
+
+        const newWidth = app.stage.originalWidth * currentScale
+        const newHeight = app.stage.originalHeight * currentScale;
+
+        app.renderer.resize(newWidth, newHeight);
+        app.stage.scale.set(currentScale, currentScale);
+    }
+
+    else if (event.key === '+' || event.key === '=') {
+        currentScale *= 1.1;
+
+        const newWidth = app.stage.originalWidth * currentScale
+        const newHeight = app.stage.originalHeight * currentScale;
+
+        app.renderer.resize(newWidth, newHeight);
+        app.stage.scale.set(currentScale, currentScale);
+    }
+});
 
 function simplifyKeyEventName(event) {
     return event.code.replace(/Digit|Key|Arrow/g, '').toUpperCase();

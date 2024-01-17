@@ -11,6 +11,7 @@ public abstract class Stage {
     private String image;
 
     private final List<Actor> actors;
+    private final List<Actor> addedActors;
 
     public Stage(int width, int height) {
         this(width, height, DEFAULT_IMAGE);
@@ -21,12 +22,16 @@ public abstract class Stage {
         this.height = height;
         this.image = imageName;
         actors = new ArrayList<>();
+        addedActors = new ArrayList<>();
     }
 
-    public void act() {}
+
+    public void act() {
+
+    }
 
     public void addActor(Actor actor, double x, double y) {
-        actors.add(actor);
+        addedActors.add(actor);
         actor.setLocation(x, y);
         actor.setStage(this);
     }
@@ -49,5 +54,10 @@ public abstract class Stage {
 
     public List<Actor> getActors() {
         return actors;
+    }
+
+    void endAct() {
+        actors.addAll(addedActors);
+        addedActors.clear();
     }
 }
