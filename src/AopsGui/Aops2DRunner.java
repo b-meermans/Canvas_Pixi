@@ -116,8 +116,13 @@ public class Aops2DRunner {
         System.out.println(getMethodInformation(a.uuid));
     }
 
-    public String getMethodInformation(String uuid) {
-        Actor actor = stage.getActorByUUID(uuid);
+    public Actor getSpriteByUUID(String uuid) {
+        return stage.getActorByUUID(uuid);
+    }
+
+    public Object[] getMethodInformation(String uuid) {
+        Actor actor = getSpriteByUUID(uuid);
+
         if (actor == null) {
             return null;
         }
@@ -131,7 +136,7 @@ public class Aops2DRunner {
             }
         }
 
-        return allMethods.toString();
+        return allMethods.toArray();
     }
 
     public static List<String> getMethodInformation(Object object) {
