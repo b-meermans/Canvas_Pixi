@@ -1,4 +1,4 @@
-package AopsGui.Exceptions;
+package AopsGui;
 
 public class StackOverflowError extends RuntimeException {
 

@@ -97,7 +97,7 @@ async function toggleRun() {
 }
 
 async function stepPIXI() {
-    const actors = await runner.act(mouseX, mouseY, isMouseDown, Array.from(keysPressed));
+    const actors = await runner.act(1, mouseX, mouseY, isMouseDown, Array.from(keysPressed));
 
     if (actors === null) {
         loadPIXI();

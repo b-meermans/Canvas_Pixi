@@ -1,7 +1,5 @@
 package AopsGui;
 
-import AopsGui.Exceptions.TimeLimitExceededException;
-import AopsGui.Exceptions.StackOverflowError;
 import StudentCode.*;
 
 import java.lang.reflect.Method;
@@ -10,13 +8,13 @@ import java.util.*;
 
 public class Aops2DRunner {
 
+    private static final Stack<Integer> stack = new Stack<>();
     private static final int MAX_STACK_TRACE_LINES = 50;
     private static final long MAX_RUN_TIME = 3000;
     private static final int COUNTER_LIMIT = 5000;
 
-    private static final int MAX_METHODS_ON_STACK = 2500;
+    private static final int MAX_METHODS_ON_STACK = 2000;
 
-    private static int methodStackCount;
     private static long clockStart;
     private static long clockCounter;
     private final Stage stage;
@@ -34,33 +32,30 @@ public class Aops2DRunner {
      * @param keysPressed an array containing all key names that are pressed
      * @return a JSON file containing all actors to update or null if the program should stop
      */
-    public String act(double mouseX, double mouseY, boolean isMousePressed, String[] keysPressed) {
+    public String act(int actsToSimulate, double mouseX, double mouseY, boolean isMousePressed, String[] keysPressed) {
 
         Gui.updateKeys(keysPressed);
         Gui.updateMouse(mouseX, mouseY, isMousePressed);
 
+        clockStart = System.currentTimeMillis();
+        clockCounter = 0;
+        stack.clear();
+
         try {
-            methodStackCount = 0;
-            clockStart = System.currentTimeMillis();
-            clockCounter = 0;
-
-            stage.act();
-
-            for (Actor actor : stage.getActors()) {
-                actor.act();
+            for (int actCount = 0; actCount < actsToSimulate; actCount++) {
+                performOneAct();
             }
-
-            stage.endAct();
         } catch (Exception e) {
             StackTraceElement[] stackTrace = e.getStackTrace();
-            if (stackTrace.length > MAX_STACK_TRACE_LINES) {
-                for (int i = 0; i < MAX_STACK_TRACE_LINES; i++) {
-                    System.err.println(stackTrace[i]);
+            for (int i = 0; i < MAX_STACK_TRACE_LINES && i < stackTrace.length; i++) {
+                String trace = stackTrace[i].toString();
+                if (!stack.isEmpty() && trace.startsWith("StudentCode.")) {
+                    trace = trace.replace("Unknown Source", stack.pop().toString());
+                } else {
+                    trace = trace.replace("(Unknown Source)", "");
+                    trace = trace.replace(".<init>", "");
                 }
-
-                System.err.println("Cutting off additional method calls.");
-            } else {
-                e.printStackTrace();
+                System.err.println(trace);
             }
 
             return null;
@@ -68,6 +63,16 @@ public class Aops2DRunner {
 
         // TODO This JSON needs to be more than just actors
         return JsonConversion.getActorJason(stage.getActors());
+    }
+
+    public void performOneAct() {
+        stage.act();
+
+        for (Actor actor : stage.getActors()) {
+            actor.act();
+        }
+
+        stage.endAct();
     }
 
     public static void exitIfNeeded() {
@@ -80,15 +85,22 @@ public class Aops2DRunner {
         }
     }
 
-    public static void addMethodToStack() {
-        methodStackCount++;
-        if (methodStackCount > MAX_METHODS_ON_STACK) {
+    public static void addMethodToStack(int lineNumber) {
+        stack.push(lineNumber);
+        if (stack.size() > MAX_METHODS_ON_STACK) {
             throw new StackOverflowError();
         }
     }
 
+    public static void changeStatement(int lineNumber) {
+        stack.pop();
+        stack.push(lineNumber);
+    }
+
     public static void removeMethodFromStack() {
-        methodStackCount--;
+        if (!stack.isEmpty()) {
+            stack.pop();
+        }
     }
 
     public Stage getStage() {

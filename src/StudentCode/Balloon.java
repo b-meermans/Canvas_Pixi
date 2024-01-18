@@ -16,43 +16,34 @@ public class Balloon extends Actor {
         super("balloon.png");
     }
 
-    public void act() {
+    public void act() { Aops2DRunner.addMethodToStack(19);
         if (Gui.isKeyPressed("up")) {
-            yVelocity -= ACCELERATION;
+            Aops2DRunner.changeStatement(21);                    yVelocity -= ACCELERATION;
         }
 
         if (Gui.isKeyPressed("right")) {
-            xVelocity += ACCELERATION;
+            Aops2DRunner.changeStatement(25);                    xVelocity += ACCELERATION;
         }
 
         if (Gui.isKeyPressed("left")) {
-            xVelocity -= ACCELERATION;
+            Aops2DRunner.changeStatement(29);                    xVelocity -= ACCELERATION;
         }
 
-        yVelocity += GRAVITY;
-        xVelocity *= FRICTION;
+        Aops2DRunner.changeStatement(32);                yVelocity += GRAVITY;
+        Aops2DRunner.changeStatement(33);                xVelocity *= FRICTION;
 
-        setLocation(getX() + xVelocity, getY() + yVelocity);
+        Aops2DRunner.changeStatement(35);                setLocation(getX() + xVelocity, getY() + yVelocity);
 
         if (Gui.isKeyPressed("5")) {
-            while (true) {}
+            while (true) {Aops2DRunner.changeStatement(38);        Aops2DRunner.exitIfNeeded();}
         }
 
         if (Gui.isKeyPressed("6")) {
-            recur();
+            Aops2DRunner.changeStatement(42);                    recur();
         }
+Aops2DRunner.removeMethodFromStack();    }
 
-        try {
-            if (Gui.isKeyPressed("5")) {
-                while (true) {}
-            }
-        } catch (Exception e) {
-            System.out.println("This should not occur, as the hidden inserted catch should be first in line");
-        }
-
-    }
-
-    public void recur() {
-        recur();
-    }
+    public void recur() { Aops2DRunner.addMethodToStack(46);
+Aops2DRunner.changeStatement(47);        recur();
+Aops2DRunner.removeMethodFromStack();    }
 }
