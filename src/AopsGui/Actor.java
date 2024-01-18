@@ -109,4 +109,6 @@ public abstract class Actor {
     void setStage(Stage stage) {
         this.stage = stage;
     }
+
+
 }

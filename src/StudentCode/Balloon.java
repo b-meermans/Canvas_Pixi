@@ -35,18 +35,24 @@ public class Balloon extends Actor {
         setLocation(getX() + xVelocity, getY() + yVelocity);
 
         if (Gui.isKeyPressed("5")) {
-            while (true) {Aops2DRunner.exitIfNeeded();
-            }
+            while (true) {}
         }
 
         if (Gui.isKeyPressed("6")) {
             recur();
         }
+
+        try {
+            if (Gui.isKeyPressed("5")) {
+                while (true) {}
+            }
+        } catch (Exception e) {
+            System.out.println("This should not occur, as the hidden inserted catch should be first in line");
+        }
+
     }
 
-    public void recur() {Aops2DRunner.addMethodToStack();
+    public void recur() {
         recur();
-
-    Aops2DRunner.removeMethodFromStack();}
-
+    }
 }

@@ -4,6 +4,10 @@ import AopsGui.Exceptions.TimeLimitExceededException;
 import AopsGui.Exceptions.StackOverflowError;
 import StudentCode.*;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.*;
+
 public class Aops2DRunner {
 
     private static final int MAX_STACK_TRACE_LINES = 50;
@@ -93,5 +97,80 @@ public class Aops2DRunner {
 
     public String getActors() {
         return JsonConversion.getActorJason(stage.getActors());
+    }
+
+    public void trial() {
+        Actor a = stage.getActors().get(0);
+        System.out.println(getMethodInformation(a.uuid));
+    }
+
+    public String getMethodInformation(String uuid) {
+        Actor actor = stage.getActorByUUID(uuid);
+        if (actor == null) {
+            return null;
+        }
+
+        List<String> allMethods = getMethodInformation(actor);
+        for (String method : allMethods) {
+            if (method.contains("(")) {
+                System.out.println(method);
+            } else {
+                System.out.printf("%n--> Methods from %s%n", method);
+            }
+        }
+
+        return allMethods.toString();
+    }
+
+    public static List<String> getMethodInformation(Object object) {
+        Class<?> clazz = object.getClass();
+        List<String> methodInformationList = new ArrayList<>();
+
+        // Get all methods, including inherited methods
+        Map<String, List<String>> classMethodsMap = new LinkedHashMap<>();
+        Set<String> uniqueMethods = new HashSet<>();
+        getAllMethods(clazz, classMethodsMap, uniqueMethods);
+
+        for (Map.Entry<String, List<String>> entry : classMethodsMap.entrySet()) {
+            methodInformationList.add(entry.getKey());  // Add class name as header
+            methodInformationList.addAll(entry.getValue());  // Add methods
+        }
+
+        return methodInformationList;
+    }
+
+    private static void getAllMethods(Class<?> clazz, Map<String, List<String>> classMethodsMap, Set<String> uniqueMethods) {
+        while (clazz != null) {
+            List<String> methodsList = new ArrayList<>();
+            Method[] declaredMethods = clazz.getDeclaredMethods();
+
+            for (Method method : declaredMethods) {
+                String returnType = method.getReturnType().getSimpleName();
+                String methodName = method.getName();
+                Parameter[] parameters = method.getParameters();
+                StringBuilder methodSignature = new StringBuilder(returnType + " " + methodName + "(");
+
+                for (int j = 0; j < parameters.length; j++) {
+                    Parameter parameter = parameters[j];
+                    methodSignature.append(parameter.getType().getSimpleName());
+
+                    if (j < parameters.length - 1) {
+                        methodSignature.append(", ");
+                    }
+                }
+
+                methodSignature.append(")");
+                String methodSig = methodSignature.toString();
+
+                // Don't re-display overridden methods
+                if (!uniqueMethods.contains(methodSig)) {
+                    uniqueMethods.add(methodSig);
+                    methodsList.add(methodSig);
+                }
+            }
+
+            classMethodsMap.put(clazz.getSimpleName(), methodsList);
+            clazz = clazz.getSuperclass();
+        }
     }
 }

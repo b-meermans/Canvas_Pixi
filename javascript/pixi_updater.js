@@ -169,7 +169,19 @@ function synchronizeSprites(incomingSprites) {
             });
             app.stage.addChild(incomingSprite);
             originalSprites.set(uuid, incomingSprite);
+
+            incomingSprite.uuid = uuid;
+            incomingSprite.eventMode = 'dynamic';
+            incomingSprite.on('click', onClick);
         }
+    }
+}
+
+async function onClick() {
+    if (!isRunning) {
+        console.log(this.uuid);
+        console.log(await runner.getMethodInformation(this.uuid));
+
     }
 }
 

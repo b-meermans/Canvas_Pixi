@@ -60,4 +60,13 @@ public abstract class Stage {
         actors.addAll(addedActors);
         addedActors.clear();
     }
+
+    Actor getActorByUUID(String uuid) {
+        for (Actor a: actors) {
+            if (a.uuid.toString().equals(uuid)) {
+                return a;
+            }
+        }
+        return null;
+    }
 }
