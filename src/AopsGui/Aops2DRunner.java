@@ -113,9 +113,9 @@ public class Aops2DRunner {
         List<String> allMethods = getMethodInformation(actor);
         for (String method : allMethods) {
             if (method.contains("(")) {
-                System.out.println(method);
+                System.out.printf("\t%s%n", method);
             } else {
-                System.out.printf("%n--> Methods from %s%n", method);
+                System.out.printf("%n\uD83D\uDCD8 %s%n", method);
             }
         }
 
@@ -143,6 +143,12 @@ public class Aops2DRunner {
         while (clazz != null) {
             List<String> methodsList = new ArrayList<>();
             Method[] declaredMethods = clazz.getDeclaredMethods();
+            // Sort the declaredMethods array based on return type then method names
+            Arrays.sort(declaredMethods, Comparator
+                    .<Method, String>comparing(m -> m.getReturnType().getSimpleName().toLowerCase())
+                    .thenComparing(Method::getName, String.CASE_INSENSITIVE_ORDER));
+
+
 
             for (Method method : declaredMethods) {
                 String returnType = method.getReturnType().getSimpleName();
