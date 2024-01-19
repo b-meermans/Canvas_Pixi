@@ -173,7 +173,15 @@ function synchronizeSprites(incomingSprites) {
             incomingSprite.uuid = uuid;
             incomingSprite.eventMode = 'dynamic';
             incomingSprite.on('click', onClick);
+            incomingSprite.on('rightup', onRightClick);
         }
+    }
+}
+
+async function onRightClick() {
+    if (!isRunning) {
+        const methods = await runner.getMethodsJSON(this.uuid);
+        console.log(methods);
     }
 }
 
@@ -222,6 +230,23 @@ function setUpPixi(stageWidth, stageHeight, stageImage) {
     backgroundSprite.width = stageWidth;
     backgroundSprite.height = stageHeight;
     app.stage.addChild(backgroundSprite);
+
+    document.addEventListener('contextmenu', (event) => {
+        // Check if the mouse is inside the Pixi application
+        const appBounds = app.view.getBoundingClientRect();
+        const mouseX = event.clientX;
+        const mouseY = event.clientY;
+
+        if (
+            mouseX >= appBounds.left &&
+            mouseX <= appBounds.right &&
+            mouseY >= appBounds.top &&
+            mouseY <= appBounds.bottom
+        ) {
+            // Prevent the default context menu
+            event.preventDefault();
+        }
+    });
 }
 
 function addMouseListener() {

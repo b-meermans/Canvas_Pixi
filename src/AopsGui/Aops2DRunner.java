@@ -139,6 +139,16 @@ public class Aops2DRunner {
         return allMethods.toArray();
     }
 
+    public String getMethodsJSON(String uuid) {
+        Actor actor = getSpriteByUUID(uuid);
+
+        if (actor == null) {
+            return null;
+        }
+
+        return MethodJSONBuilder.methodsToJSON(actor);
+    }
+
     public static List<String> getMethodInformation(Object object) {
         Class<?> clazz = object.getClass();
         List<String> methodInformationList = new ArrayList<>();
