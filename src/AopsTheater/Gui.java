@@ -2,6 +2,7 @@ package AopsTheater;
 
 import java.util.*;
 
+// TODO This GUI file is being replaced by Events eventually
 public class Gui {
     private static double mouseX;
     private static double mouseY;

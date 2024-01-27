@@ -9,6 +9,10 @@ public class AopsTheater {
      */
     private Director director;
 
+    private AopsTheater() {
+        reset();
+    }
+
     /**
      * Creates the AopsTheater
      * @return the Theater object itself or null if the initial Stage failed
@@ -30,26 +34,12 @@ public class AopsTheater {
     }
 
     /**
-     * Simulates one 'update' of the entire theater.
-     * @param json A json including: numFrames and a list of all player's events
-     * @return a json file representing the state of the theater or null if the update failed
+     * Generates a JSON containing the method headers of a given UUID
+     * @param uuid An actor's UUID or null for the Stage's methods
+     * @return a json file containing the method headers
      */
-    public String update(String json) {
-        // Convert the Json event information into an object
-        Events.fromJSON(json);
-
-        return AopsTheaterHandler.update(director);
-    }
-
-    /**
-     * Simulates a single step with no exterior events (mouse/keyboard).
-     * @return a json file representing the state of the theater or null if the step failed
-     */
-    public String step() {
-        // No exterior events will apply for this step
-        Events.reset();
-
-        return AopsTheaterHandler.update(director);
+    public String getMethodsJSON(String uuid) {
+        return director.getMethodsJSON(uuid);
     }
 
     /**
@@ -58,15 +48,6 @@ public class AopsTheater {
      */
     public String getState() {
         return AopsTheaterHandler.getState(director);
-    }
-
-    /**
-     * Generates a JSON containing the method headers of a given UUID
-     * @param uuid An actor's UUID or null for the Stage's methods
-     * @return a json file containing the method headers
-     */
-    public String getMethodsJSON(String uuid) {
-        return director.getMethodsJSON(uuid);
     }
 
     /**
@@ -91,8 +72,26 @@ public class AopsTheater {
         return director.getState();
     }
 
-    private AopsTheater() {
-        // TODO Consider options for an alternate start than MyStage
-        reset();
+    /**
+     * Simulates a single step with no exterior events (mouse/keyboard).
+     * @return a json file representing the state of the theater or null if the step failed
+     */
+    public String step() {
+        // No exterior events will apply for this step
+        Events.reset();
+
+        return AopsTheaterHandler.update(director);
+    }
+
+    /**
+     * Simulates one 'update' of the entire theater.
+     * @param json A json including: numFrames and a list of all player's events
+     * @return a json file representing the state of the theater or null if the update failed
+     */
+    public String update(String json) {
+        // Convert the Json event information into an object
+        Events.fromJSON(json);
+
+        return AopsTheaterHandler.update(director);
     }
 }

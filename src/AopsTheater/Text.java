@@ -1,18 +1,20 @@
 package AopsTheater;
 
 import java.awt.*;
-import java.util.UUID;
 
 public class Text {
-    // TODO Revisit this - no thought put into it.
+    String uuid;
 
-    UUID uuid;
+    private Stage stage;
 
-    private String text;
     private double x;
     private double y;
-    private int z;
+    private int z;  // TODO Think through how Z will work
     private double rotation;
+    private double alpha = 1;
+    private boolean isVisible = true;
+
+    private String text;
 
     private boolean italic;
     private boolean bold;
@@ -20,38 +22,71 @@ public class Text {
     private boolean wordWrap;
     private int wordWrapWidth = Integer.MAX_VALUE;
 
-    private Color color = Color.BLACK;
+    private Color fontColor = Color.BLACK;
     private Font font = Font.COURIER_NEW;
+    private int size = 16;
     private Alignment alignment = Alignment.LEFT;
-
-    private Stage stage;
-
-    enum Font {
-        ARIAL,
-        HELVETICA,
-        TIMES_NEW_ROMAN,
-        COURIER_NEW,
-        VERDANA,
-        GEORGIA;
-
-        public String toString() {
-            return this.name().replaceAll("_", " ");
-        }
-    }
-
-    enum Alignment {
-        LEFT,
-        CENTER,
-        RIGHT;
-    }
 
     public Text(String text) {
         this.text = text;
-        uuid = UUID.randomUUID();
+        uuid = AopsTheaterHandler.generatedUUID();
     }
 
-    String getID() {
-        return uuid.toString();
+    public Alignment getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(Alignment alignment) {
+        this.alignment = alignment;
+    }
+
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(double alpha) {
+        this.alpha = Math.max(0.0, Math.min(1.0, alpha));
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
+    }
+
+    public Color getFontColor() {
+        return fontColor;
+    }
+
+    public void setFontColor(Color fontColor) {
+        this.fontColor = fontColor;
+    }
+
+    public double getRotation() {
+        return this.rotation;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation % 360;
+        this.rotation += (this.rotation < 0) ? 360 : 0;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     public String getText() {
@@ -62,36 +97,28 @@ public class Text {
         this.text = text;
     }
 
-    public double getX() {
-        return x;
+    String getUUID() {
+        return uuid.toString();
     }
 
-    public void setLocation(double x, double y) {
-        this.x = x;
+    public int getWordWrapWidth() {
+        return wordWrapWidth;
+    }
+
+    public void setWordWrapWidth(int wordWrapWidth) {
+        this.wordWrapWidth = wordWrapWidth;
+    }
+
+    public double getX() {
+        return this.x;
     }
 
     public double getY() {
-        return y;
+        return this.y;
     }
 
     public int getZ() {
         return z;
-    }
-
-    public double getRotation() {
-        return rotation;
-    }
-
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
-    }
-
-    public boolean isItalic() {
-        return italic;
-    }
-
-    public void setItalic(boolean italic) {
-        this.italic = italic;
     }
 
     public boolean isBold() {
@@ -100,6 +127,14 @@ public class Text {
 
     public void setBold(boolean bold) {
         this.bold = bold;
+    }
+
+    public boolean isItalic() {
+        return italic;
+    }
+
+    public void setItalic(boolean italic) {
+        this.italic = italic;
     }
 
     public boolean isUnderlined() {
@@ -118,39 +153,45 @@ public class Text {
         this.wordWrap = wordWrap;
     }
 
-    public int getWordWrapWidth() {
-        return wordWrapWidth;
+    public void move(double distance) {
+        x += Math.cos(rotation) * distance;
+        y += Math.sin(rotation) * distance;
     }
 
-    public void setWordWrapWidth(int wordWrapWidth) {
-        this.wordWrapWidth = wordWrapWidth;
+    public void setLocation(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public Color getColor() {
-        return color;
+    void setVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public String toString() {
+        return "AopsGui.Actor{x=" + this.x + ", y=" + this.y + ", rotation=" + this.rotation + "}";
     }
 
-    public Font getFont() {
-        return font;
+    public void turn(double degrees) {
+        rotation += degrees;
     }
 
-    public void setFont(Font font) {
-        this.font = font;
+    public void turnTowards(double x, double y) {
+        rotation = Math.atan2(y - this.y, x - this.x);
     }
 
-    public Alignment getAlignment() {
-        return alignment;
+    // TODO Look into Fonts, this is a guess
+    enum Font {
+        ARIAL,
+        HELVETICA,
+        TIMES_NEW_ROMAN,
+        COURIER_NEW,
+        VERDANA,
+        GEORGIA;
     }
 
-    public void setAlignment(Alignment alignment) {
-        this.alignment = alignment;
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    enum Alignment {
+        LEFT,
+        CENTER,
+        RIGHT;
     }
 }

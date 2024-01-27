@@ -1,14 +1,12 @@
 package AopsTheater;
 
-import java.util.UUID;
-
 public class Sound {
     // TODO Is it important to find the current status of the sound from the front end? Ie: is it playing still?
 
-    UUID uuid;
+    String uuid;
 
     private final String fileName;
-    private double volume;
+    private double volume = 1;
     private Status status = Status.STOP;
 
     enum Status {
@@ -25,10 +23,10 @@ public class Sound {
 
     public Sound(String fileName) {
         this.fileName = fileName;
-        uuid = UUID.randomUUID();
+        uuid = AopsTheaterHandler.generatedUUID();
     }
 
-    UUID getId() {
+    String getUUId() {
         return uuid;
     }
 

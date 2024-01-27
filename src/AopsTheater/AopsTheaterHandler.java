@@ -1,33 +1,32 @@
 package AopsTheater;
 
 import java.util.Stack;
+import java.util.UUID;
 
 public class AopsTheaterHandler {
+
     /**
      * Holds the current line number executing of the student's code
      */
     private static final Stack<Integer> stack = new Stack<>();
-
     /**
      * How many lines to display in a stack trace
      */
     private static final int MAX_STACK_TRACE_LINES = 50;
-
     /**
      * How long, in milliseconds, a second update can run before it is timed out
      */
     private static final long MAX_RUN_TIME = 3000;
-
     /**
      * How many line calls before checking on the clock again, to reduce calls to the clock
      */
     private static final int COUNTER_LIMIT = 5000;
-
     /**
      * Max number of student methods on the stack before the update is considered a stackoverflow.
      */
     private static final int MAX_METHODS_ON_STACK = 2000;
-
+    // TODO Re-think how Z values work for reordering items later.
+    private static int currentZ = 0;
     /**
      * When did the update start?
      */
@@ -38,16 +37,42 @@ public class AopsTheaterHandler {
      */
     private static long clockCounter;
 
-    static String update(Director director) {
-        resetTimers();
-
-        try {
-            director.update();
-            return director.getState();
-        } catch (Exception e) {
-            printStackTrace(e);
-            return null;
+    public static void addMethodToStack(int lineNumber) {
+        stack.push(lineNumber);
+        if (stack.size() > MAX_METHODS_ON_STACK) {
+            throw new StackOverflowError();
         }
+    }
+
+   static Director buildDirector(String startingStageClassName) {
+       resetTimers();
+       currentZ = 0;
+
+       try {
+           return new Director(startingStageClassName);
+       } catch (Exception e) {
+           printStackTrace(e);
+           return null;
+       }
+   }
+
+    public static void changeStatement(int lineNumber) {
+        stack.pop();
+        stack.push(lineNumber);
+    }
+
+    public static void exitIfNeeded() {
+        clockCounter++;
+        if (clockCounter > COUNTER_LIMIT) {
+            if (System.currentTimeMillis() - clockStart > MAX_RUN_TIME) {
+                throw new TimeLimitExceededException();
+            }
+            clockCounter = 0;
+        }
+    }
+
+    static String generatedUUID() {
+        return UUID.randomUUID().toString();
     }
 
     static String getState(Director director) {
@@ -72,23 +97,9 @@ public class AopsTheaterHandler {
         }
    }
 
-   static void resetTimers() {
-       // Initialize the states for this update to check runtime and method calls on the stack
-       clockStart = System.currentTimeMillis();
-       clockCounter = 0;
-       stack.clear();
-   }
-
-   static Director buildDirector(String startingStageClassName) {
-       resetTimers();
-
-       try {
-           return new Director(startingStageClassName);
-       } catch (Exception e) {
-           printStackTrace(e);
-           return null;
-       }
-   }
+    static int nextZ() {
+        return currentZ++;
+    }
 
     private static void printStackTrace(Exception e) {
         StackTraceElement[] stackTrace = e.getStackTrace();
@@ -104,32 +115,28 @@ public class AopsTheaterHandler {
         }
     }
 
-
-    public static void exitIfNeeded() {
-        clockCounter++;
-        if (clockCounter > COUNTER_LIMIT) {
-            if (System.currentTimeMillis() - clockStart > MAX_RUN_TIME) {
-                throw new TimeLimitExceededException();
-            }
-            clockCounter = 0;
-        }
-    }
-
-    public static void addMethodToStack(int lineNumber) {
-        stack.push(lineNumber);
-        if (stack.size() > MAX_METHODS_ON_STACK) {
-            throw new StackOverflowError();
-        }
-    }
-
-    public static void changeStatement(int lineNumber) {
-        stack.pop();
-        stack.push(lineNumber);
-    }
-
     public static void removeMethodFromStack() {
         if (!stack.isEmpty()) {
             stack.pop();
+        }
+    }
+
+   static void resetTimers() {
+       // Initialize the states for this update to check runtime and method calls on the stack
+       clockStart = System.currentTimeMillis();
+       clockCounter = 0;
+       stack.clear();
+   }
+
+    static String update(Director director) {
+        resetTimers();
+
+        try {
+            director.update();
+            return director.getState();
+        } catch (Exception e) {
+            printStackTrace(e);
+            return null;
         }
     }
 }
