@@ -1,12 +1,24 @@
-import AopsGui.Aops2DRunner;
+import AopsTheater.*;
+import java.awt.Color;
+import java.util.Arrays;
 
 public class Main {
-    /**
-     * For quick tests outside the local server.
-     * @param args
-     */
     public static void main(String[] args) {
-        Aops2DRunner runner = new Aops2DRunner();
-        System.out.println(runner.act(1, 0, 0, false, new String[0]));
+        AopsTheater aopsTheater = AopsTheater.build();
+
+
+        TheaterArt.drawEllipse(0, 0, 100, 200.5);
+        TheaterArt.drawFilledEllipse(0, 0, 100, 200.5);
+        TheaterArt.drawLine(30, 40, -20, 50);
+        TheaterArt.setBorderColor(Color.GREEN);
+        TheaterArt.drawFilledRectangle(1, 1, 3, 3);
+        TheaterArt.drawRoundedRectangle(1, 1, 3, 3, 1);
+
+        double[] xs = {0, 5, 19, 100};
+        double[] ys = {40, 20, 10};
+        TheaterArt.drawFilledPolygon(xs, ys);
+
+        System.out.println(aopsTheater.getState());
+        System.out.println(aopsTheater.getMethodsJSON(null));
     }
 }

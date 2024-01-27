@@ -1,5 +1,5 @@
 package StudentCode;
-import AopsGui.*;
+import AopsTheater.*;
 
 public class Walker extends Actor {
     public Walker() {
@@ -9,7 +9,7 @@ public class Walker extends Actor {
     public void act() {
         move(1);
         if (getX() > getStage().getWidth() + 80) {
-            setX(0);
+            setLocation(0, getY());
         }
     }
 }

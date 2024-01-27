@@ -1,6 +1,6 @@
 package StudentCode;
 
-import AopsGui.*;
+import AopsTheater.*;
 
 public class BrokenPen extends Actor {
     public BrokenPen() {

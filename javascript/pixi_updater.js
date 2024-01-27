@@ -12,12 +12,13 @@ let fullSize = true;
 
 // Setup PIXI Window Information
 let app;
-let runner;
+let aopsTheater;
 let isRunning = false;
 let currentScale = 1;
 
 window.addEventListener('message', function (event) {
   if (event.data && event.data.action === 'loadPIXI') {
+
       loadPIXI()
       .then(result => {
         window.parent.postMessage({ action: 'loadPIXI', result: result }, '*');
@@ -45,7 +46,6 @@ window.addEventListener('message', function (event) {
 });
 
 async function loadPIXI() {
-
     destroyCurrentPixi();
     originalSprites.clear();
     isRunning = false;
@@ -59,15 +59,12 @@ async function loadPIXI() {
         console.error("The CheerpJ library was not available");
     }
 
-    const Aops2DRunner = await lib.AopsGui.Aops2DRunner;
-    runner = await new Aops2DRunner();
+    const AopsTheaterClass = await lib.AopsTheater.AopsTheater;
+    aopsTheater = await AopsTheaterClass.build();
 
-    // Set up the Pixi App to match the Java Stage
-    const javaStage = await runner.getStage();
-    setUpPixi(await javaStage.getWidth(), await javaStage.getHeight(), await javaStage.getImage());
-
-    updatePIXI(await runner.getActors());
-    updatePIXI(await runner.getActors());
+    const theaterState = await aopsTheater.getState();
+    setUpPixi(theaterState);
+    updatePIXI(theaterState);
 
     new Audio('sounds/incorrect.mp3').play();
 }
@@ -97,14 +94,14 @@ async function toggleRun() {
 }
 
 async function stepPIXI() {
-    const actors = await runner.act(1, mouseX, mouseY, isMouseDown, Array.from(keysPressed));
+    const json = await aopsTheater.step();
 
-    if (actors === null) {
+    if (json === null) {
         loadPIXI();
         return;
     }
 
-    updatePIXI(actors);
+    updatePIXI(json);
 }
 
 function destroyCurrentPixi() {
@@ -113,17 +110,27 @@ function destroyCurrentPixi() {
     }
 }
 
-function updatePIXI(actors) {
-    const actorArray = JSON.parse(actors);
+function updatePIXI(json) {
+    const jsonObject = JSON.parse(json);
 
-    const actorMap = convertActorsToSprites(actorArray);
+    const stageData = jsonObject.stage;
+    const actorData = jsonObject.actors;
+    const textsData = jsonObject.texts;
+    const soundsData = jsonObject.sounds;
+    const shapesData = jsonObject.shapes;
+
+    const actorMap = convertActorsToSprites(actorData);
     synchronizeSprites(actorMap);
 }
 
 function convertActorsToSprites(actors) {
     const actorMap = new Map();
     actors.forEach(actor => {
-        const filename = 'images/' + actor.image;
+        let filename = 'images/' + actor.image;
+
+        if (actor.image.includes("http")) {
+            filename = actor.image;
+        }
         const sprite = new PIXI.Sprite(PIXI.Texture.from(filename));
         sprite.x = actor.x;
         sprite.y = actor.y;
@@ -180,55 +187,66 @@ function synchronizeSprites(incomingSprites) {
 
 async function onRightClick() {
     if (!isRunning) {
-        const methods = await runner.getMethodsJSON(this.uuid);
+        const methods = await aopsTheater.getMethodsJSON(this.uuid);
         console.log(methods);
     }
 }
 
 async function onClick() {
     if (!isRunning) {
-        // Grabs all of the method names, comes back as an object [] for now.
-        // As the demo, the array has index 0 as the class name
-        // The next indices are the methods under that class.
-        // If there is a parent class, that class name will be an element at some point
-        // Ie: [Person, void act(), String getName(), Actor, void setLocation(int, int), Object]
-        const methods = await runner.getMethodInformation(this.uuid);
-
-        // For a demonstration - grab the first actual method
-        // We need to strip away everything but the method name
-        const testGrab = await methods[1].toString();
-        const spaceIndex = testGrab.indexOf(' ');
-        const parenIndex = testGrab.indexOf('(');
-        const methodName = testGrab.substring(spaceIndex + 1, parenIndex);
-
-        // Which Actor has this UUID?
-        sprite = await runner.getSpriteByUUID(this.uuid);
-        // Ask the Actor to use the method
-        await sprite[methodName]();
-        // Redraw everything in case this modified other Actors
-        updatePIXI(await runner.getActors());
+//        // Grabs all of the method names, comes back as an object [] for now.
+//        // As the demo, the array has index 0 as the class name
+//        // The next indices are the methods under that class.
+//        // If there is a parent class, that class name will be an element at some point
+//        // Ie: [Person, void act(), String getName(), Actor, void setLocation(int, int), Object]
+//        const methods = await runner.getMethodInformation(this.uuid);
+//
+//        // For a demonstration - grab the first actual method
+//        // We need to strip away everything but the method name
+//        const testGrab = await methods[1].toString();
+//        const spaceIndex = testGrab.indexOf(' ');
+//        const parenIndex = testGrab.indexOf('(');
+//        const methodName = testGrab.substring(spaceIndex + 1, parenIndex);
+//
+//        // Which Actor has this UUID?
+//        sprite = await runner.getSpriteByUUID(this.uuid);
+//        // Ask the Actor to use the method
+//        await sprite[methodName]();
+//        // Redraw everything in case this modified other Actors
+//        updatePIXI(await runner.getState());
     }
 }
 
-function setUpPixi(stageWidth, stageHeight, stageImage) {
+function setUpPixi(theaterState) {
+    const jsonObject = JSON.parse(theaterState);
+    const stageData = jsonObject.stage;
+
+    console.log(stageData);
+
+
     app = new PIXI.Application({
-        width: stageWidth,
-        height: stageHeight
+        width: stageData.width,
+        height: stageData.height
     });
 
     currentScale = 1;
 
-    app.stage.originalWidth = stageWidth;
-    app.stage.originalHeight = stageHeight;
+    app.stage.originalWidth = stageData.width;
+    app.stage.originalHeight = stageData.height;
 
     document.body.appendChild(app.view);
     addMouseListener();
     addKeyboardListener();
 
-    const filename = 'images/' + stageImage;
+    let filename = 'images/' + stageData.image;
+
+    if (stageData.image.includes("http")) {
+        filename = stageData.image;
+    }
+
     const backgroundSprite = new PIXI.Sprite(PIXI.Texture.from(filename));
-    backgroundSprite.width = stageWidth;
-    backgroundSprite.height = stageHeight;
+    backgroundSprite.width = stageData.width;;
+    backgroundSprite.height = stageData.height;
     app.stage.addChild(backgroundSprite);
 
     document.addEventListener('contextmenu', (event) => {

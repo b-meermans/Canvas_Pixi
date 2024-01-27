@@ -1,5 +1,5 @@
 package StudentCode;
-import AopsGui.*;
+import AopsTheater.*;
 
 public class CircleMover extends Actor {
     public void act() {

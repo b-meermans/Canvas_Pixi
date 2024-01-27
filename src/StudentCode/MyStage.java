@@ -1,6 +1,6 @@
 package StudentCode;
 
-import AopsGui.Stage;
+import AopsTheater.*;
 
 public class MyStage extends Stage {
 
@@ -21,6 +21,9 @@ public class MyStage extends Stage {
         addActor(new Balloon(), getWidth() / 2.0, getHeight() / 2.0);
         addActor(new BrokenPen(), 0, 0);
 
+        addText(new Text("Hello, World!"), 400, 100);
+        addSound("alpha.mp3");
+        addActor(new AnimatedActor(), 0, 0);
 
     }
 }

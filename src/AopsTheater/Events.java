@@ -10,11 +10,15 @@ public class Events {
 
     static void reset() {
         numUpdates = 1;
-        playerIDToPlayerEvent.clear();
+        if (playerIDToPlayerEvent == null) {
+            playerIDToPlayerEvent = new HashMap<>();
+        } else {
+            playerIDToPlayerEvent.clear();
+        }
     }
 
     static void fromJSON(String json) {
-        playerIDToPlayerEvent = new HashMap<>();
+        playerIDToPlayerEvent.clear();
         parseJSON(json);
     }
 

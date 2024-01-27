@@ -1,7 +1,7 @@
 package StudentCode;
 
-import AopsGui.Actor;
-import AopsGui.Gui;
+import AopsTheater.Actor;
+import AopsTheater.Gui;
 
 public class ImageChanger extends Actor {
     private String[] images = {"balloon.png", "plane.png", "AoPS.png"};

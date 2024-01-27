@@ -1,8 +1,6 @@
 package StudentCode;
 
-import AopsGui.Actor;
-import AopsGui.Aops2DRunner;
-import AopsGui.Gui;
+import AopsTheater.*;
 
 public class Balloon extends Actor {
 
@@ -16,34 +14,35 @@ public class Balloon extends Actor {
         super("balloon.png");
     }
 
-    public void act() { Aops2DRunner.addMethodToStack(19);
+    public void act() { AopsTheaterHandler.addMethodToStack(19);
         if (Gui.isKeyPressed("up")) {
-            Aops2DRunner.changeStatement(21);                    yVelocity -= ACCELERATION;
+            AopsTheaterHandler.changeStatement(21);                    yVelocity -= ACCELERATION;
         }
 
         if (Gui.isKeyPressed("right")) {
-            Aops2DRunner.changeStatement(25);                    xVelocity += ACCELERATION;
+            AopsTheaterHandler.changeStatement(25);                    xVelocity += ACCELERATION;
         }
 
         if (Gui.isKeyPressed("left")) {
-            Aops2DRunner.changeStatement(29);                    xVelocity -= ACCELERATION;
+            AopsTheaterHandler.changeStatement(29);                    xVelocity -= ACCELERATION;
         }
 
-        Aops2DRunner.changeStatement(32);                yVelocity += GRAVITY;
-        Aops2DRunner.changeStatement(33);                xVelocity *= FRICTION;
+        AopsTheaterHandler.changeStatement(32);                yVelocity += GRAVITY;
+        AopsTheaterHandler.changeStatement(33);                xVelocity *= FRICTION;
 
-        Aops2DRunner.changeStatement(35);                setLocation(getX() + xVelocity, getY() + yVelocity);
+        AopsTheaterHandler.changeStatement(35);                setLocation(getX() + xVelocity, getY() + yVelocity);
 
         if (Gui.isKeyPressed("5")) {
-            while (true) {Aops2DRunner.changeStatement(38);        Aops2DRunner.exitIfNeeded();}
+            while (true) {
+                AopsTheaterHandler.changeStatement(38);        AopsTheaterHandler.exitIfNeeded();}
         }
 
         if (Gui.isKeyPressed("6")) {
-            Aops2DRunner.changeStatement(42);                    recur();
+            AopsTheaterHandler.changeStatement(42);                    recur();
         }
-Aops2DRunner.removeMethodFromStack();    }
+AopsTheaterHandler.removeMethodFromStack();    }
 
-    public void recur() { Aops2DRunner.addMethodToStack(46);
-Aops2DRunner.changeStatement(47);        recur();
-Aops2DRunner.removeMethodFromStack();    }
+    public void recur() { AopsTheaterHandler.addMethodToStack(46);
+AopsTheaterHandler.changeStatement(47);        recur();
+AopsTheaterHandler.removeMethodFromStack();    }
 }

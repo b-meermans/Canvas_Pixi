@@ -69,6 +69,7 @@ public class AopsTheater {
             return null;
         }
 
+        Events.reset();
         return director.getState();
     }
 
@@ -90,7 +91,7 @@ public class AopsTheater {
      */
     public String update(String json) {
         // Convert the Json event information into an object
-        Events.fromJSON(json);
+        //Events.fromJSON(json);
 
         return AopsTheaterHandler.update(director);
     }

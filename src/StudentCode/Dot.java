@@ -1,6 +1,6 @@
 package StudentCode;
 
-import AopsGui.Actor;
+import AopsTheater.Actor;
 
 public class Dot extends Actor {
     public Dot() {
