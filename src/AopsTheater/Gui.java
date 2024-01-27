@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 import java.util.*;
 

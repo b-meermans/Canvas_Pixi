@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,8 @@ public abstract class Stage {
 
     private final List<Actor> actors;
     private final List<Actor> addedActors;
+    private final List<Text> texts;
+    private final List<Sound> sounds;
 
     public Stage(int width, int height) {
         this(width, height, DEFAULT_IMAGE);
@@ -23,6 +25,9 @@ public abstract class Stage {
         this.image = imageName;
         actors = new ArrayList<>();
         addedActors = new ArrayList<>();
+
+        texts = new ArrayList<Text>();
+        sounds = new ArrayList<Sound>();
     }
 
 
@@ -34,6 +39,16 @@ public abstract class Stage {
         addedActors.add(actor);
         actor.setLocation(x, y);
         actor.setStage(this);
+    }
+
+    public void addText(Text text, double x, double y) {
+        texts.add(text);
+        text.setLocation(x, y);
+        text.setStage(this);
+    }
+
+    public void addSound(String filename) {
+        sounds.add(new Sound(filename));
     }
 
     public int getWidth() {
@@ -54,6 +69,14 @@ public abstract class Stage {
 
     public List<Actor> getActors() {
         return actors;
+    }
+
+    public List<Text> getTexts() {
+        return texts;
+    }
+
+    public List<Sound> getSounds() {
+        return sounds;
     }
 
     void endAct() {

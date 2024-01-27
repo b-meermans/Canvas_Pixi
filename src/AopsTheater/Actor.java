@@ -1,12 +1,15 @@
-package AopsGui;//
+package AopsTheater;//
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by FernFlower decompiler)
 //
 
+import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Actor {
+    // TODO AnimatedActor class
+
     private static final String DEFAULT_IMAGE = "AoPS.png";
 
     UUID uuid;
@@ -14,8 +17,13 @@ public abstract class Actor {
     private Stage stage;
     private double x;
     private double y;
+    private int z;
     private double rotation;
     private String image;
+    private double width = 60;
+    private double height = 30;
+    private Color tint = Color.WHITE;
+    private double alpha = 1;
 
     public Actor() {
         this(DEFAULT_IMAGE);
@@ -55,7 +63,43 @@ public abstract class Actor {
         this.y = y;
     }
 
-    public String getID() {
+    public int getZ() {
+        return z;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public Color getTint() {
+        return tint;
+    }
+
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public void setTint(Color tint) {
+        this.tint = tint;
+    }
+
+    public void setAlpha(double alpha) {
+        this.alpha = Math.max(0.0, Math.min(1.0, alpha));
+    }
+
+    String getID() {
         return uuid.toString();
     }
 
