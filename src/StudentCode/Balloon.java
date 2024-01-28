@@ -14,16 +14,18 @@ public class Balloon extends Actor {
         super("balloon.png");
     }
 
+
+
     public void act() { AopsTheaterHandler.addMethodToStack(19);
-        if (Gui.isKeyPressed("up")) {
+        if (Events.isKeyDown(1,"up")) {
             AopsTheaterHandler.changeStatement(21);                    yVelocity -= ACCELERATION;
         }
 
-        if (Gui.isKeyPressed("right")) {
+        if (Events.isKeyDown(1,"right")) {
             AopsTheaterHandler.changeStatement(25);                    xVelocity += ACCELERATION;
         }
 
-        if (Gui.isKeyPressed("left")) {
+        if (Events.isKeyDown(1,"left")) {
             AopsTheaterHandler.changeStatement(29);                    xVelocity -= ACCELERATION;
         }
 
@@ -32,12 +34,11 @@ public class Balloon extends Actor {
 
         AopsTheaterHandler.changeStatement(35);                setLocation(getX() + xVelocity, getY() + yVelocity);
 
-        if (Gui.isKeyPressed("5")) {
-            while (true) {
-                AopsTheaterHandler.changeStatement(38);        AopsTheaterHandler.exitIfNeeded();}
+        if (Events.isKeyDown(1,"5")) {
+            while (true) {AopsTheaterHandler.changeStatement(38);        AopsTheaterHandler.exitIfNeeded();}
         }
 
-        if (Gui.isKeyPressed("6")) {
+        if (Events.isKeyDown(1, "6")) {
             AopsTheaterHandler.changeStatement(42);                    recur();
         }
 AopsTheaterHandler.removeMethodFromStack();    }

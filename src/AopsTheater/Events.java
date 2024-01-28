@@ -5,7 +5,7 @@ import java.util.*;
 public class Events {
 
     private static int numUpdates;
-    private static Integer defaultPlayer;
+    private static Integer defaultPlayer = 1;
     private static Map<Integer, PlayerEvent> playerIDToPlayerEvent;
 
     static void reset() {
@@ -26,52 +26,101 @@ public class Events {
         return numUpdates;
     }
 
-    public static PlayerEvent getPlayerEvent(int playerID) {
-        return playerIDToPlayerEvent.getOrDefault(playerID, null);
+    public static double getMouseX() {
+        return playerIDToPlayerEvent.get(defaultPlayer).getMouseX();
     }
 
-    private static void parseJSON(String json) {
-        // TODO Switch to a proper JSON library. This code relies on a well formed JSON currently.
+    public static double getMouseY() {
+        return playerIDToPlayerEvent.get(defaultPlayer).getMouseY();
+    }
 
-        String[] tokens = json.split("\"");
+    public static boolean isMousePressed() {
+        return playerIDToPlayerEvent.get(defaultPlayer).isLeftMouseClick();
+    }
 
-        for (int i = 0; i < tokens.length; i++) {
-            if (tokens[i].equals("numberOfUpdates")) {
-                numUpdates = Integer.parseInt(tokens[i + 2]);
-            } else if (tokens[i].equals("playerId")) {
-                int playerId = Integer.parseInt(tokens[i + 2]);
+    public static boolean isKeyDown(String key) {
+        return playerIDToPlayerEvent.get(defaultPlayer).isKeyPressed(key);
+    }
 
-                // Used for single player theaters, the first player found becomes the 'default' player
-                if (defaultPlayer == null) {
-                    defaultPlayer = playerId;
-                }
+    public static boolean isKeyDown(int playerID, String key) {
+        key = key.toUpperCase();
+        PlayerEvent playerEvent = playerIDToPlayerEvent.getOrDefault(playerID, null);
+        return playerEvent != null && playerEvent.isKeyPressed(key);
+    }
 
-                double mouseX = Double.parseDouble(tokens[i + 8]);
-                double mouseY = Double.parseDouble(tokens[i + 12]);
-                boolean leftMouseClick = Boolean.parseBoolean(tokens[i + 16]);
-                boolean rightMouseClick = Boolean.parseBoolean(tokens[i + 20]);
+    public static void parseJSON(String jsonInput) {
+        // TODO Need to figure this out for real.
 
-                Set<String> pressedKeys = new HashSet<>();
-                if (tokens[i + 24].equals("pressedKeys")) {
-                    i += 2; // Move to the beginning of the keys array
-                    while (!tokens[i].equals("]")) {
-                        pressedKeys.add(tokens[i].replaceAll(",", "")); // Remove commas
-                        i++;
+//        numUpdates = 1;
+//
+//        HashSet<String> keys = new HashSet<>();
+//        if (Math.random() < 0.2) {
+//            keys.add("up");
+//        }
+//
+//        // Create a new PlayerEvent and add it to the list
+//        PlayerEvent playerEvent = new PlayerEvent.Builder()
+//                .mouseX(500)
+//                .mouseY(500)
+//                .leftMouseClick(true)
+//                .rightMouseClick(true)
+//                .pressedKeys(keys)
+//                .build();
+//
+//        playerIDToPlayerEvent.put(1, playerEvent);
+
+        int lineIndex = -1;
+        String[] lines = jsonInput.split("\n");
+
+        for (String line : lines) {
+            line = line.trim();
+
+            if (line.startsWith("\"numberOfUpdates\":")) {
+                String[] parts = line.split(":");
+                numUpdates = Integer.parseInt(parts[1].trim().replace(",", ""));
+            } else if (line.startsWith("\"playerEvents\":")) {
+                while (!(line = lines[++lineIndex].trim()).equals("]")) {
+                    if (line.equals("{")) {
+                        PlayerEvent.Builder playerBuilder = new PlayerEvent.Builder();
+
+                        while (!(line = lines[++lineIndex].trim()).startsWith("}")) {
+                            String[] keyValue = line.split(":");
+                            if (keyValue.length == 2) {
+                                String key = keyValue[0].trim().replace("\"", "");
+                                String value = keyValue[1].trim().replace("\"", "");
+
+                                switch (key) {
+                                    case "playerId":
+                                        playerBuilder.setID(Integer.parseInt(value.replaceAll(",", "")));
+                                        break;
+                                    case "mouseX":
+                                        playerBuilder.mouseX(Double.parseDouble(value.replaceAll(",", "")));
+                                        break;
+                                    case "mouseY":
+                                        playerBuilder.mouseY(Double.parseDouble(value.replaceAll(",", "")));
+                                        break;
+                                    case "leftMouseClick":
+                                        playerBuilder.leftMouseClick(Boolean.parseBoolean(value.replaceAll(",", "")));
+                                        break;
+                                    case "rightMouseClick":
+                                        playerBuilder.rightMouseClick(Boolean.parseBoolean(value.replaceAll(",", "")));
+                                        break;
+                                    case "pressedKeys":
+                                        String[] keysArray = value.substring(1, value.length() - 1).split(",");
+                                        Set<String> keysList = new HashSet<>();
+                                        for (String keyItem : keysArray) {
+                                            keysList.add(keyItem.trim().replace("\"", ""));
+                                        }
+                                        playerBuilder.pressedKeys(keysList);
+                                        break;
+                                }
+                            }
+                        }
+                        PlayerEvent playerEvent = playerBuilder.build();
+                        playerIDToPlayerEvent.put(playerEvent.getID(), playerEvent);
                     }
                 }
-
-                // Create a new PlayerEvent and add it to the list
-                PlayerEvent playerEvent = new PlayerEvent.Builder()
-                        .mouseX(mouseX)
-                        .mouseY(mouseY)
-                        .leftMouseClick(leftMouseClick)
-                        .rightMouseClick(rightMouseClick)
-                        .pressedKeys(pressedKeys)
-                        .build();
-
-                playerIDToPlayerEvent.put(playerId, playerEvent);
             }
         }
     }
-
 }

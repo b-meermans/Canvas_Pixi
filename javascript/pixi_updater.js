@@ -94,7 +94,7 @@ async function toggleRun() {
 }
 
 async function stepPIXI() {
-    const json = await aopsTheater.step();
+    const json = await aopsTheater.update(jsonify());
 
     if (json === null) {
         loadPIXI();
@@ -221,9 +221,6 @@ function setUpPixi(theaterState) {
     const jsonObject = JSON.parse(theaterState);
     const stageData = jsonObject.stage;
 
-    console.log(stageData);
-
-
     app = new PIXI.Application({
         width: stageData.width,
         height: stageData.height
@@ -322,4 +319,26 @@ window.addEventListener('keydown', (event) => {
 
 function simplifyKeyEventName(event) {
     return event.code.replace(/Digit|Key|Arrow/g, '').toUpperCase();
+}
+
+function jsonify() {
+
+    // TODO This is just a mock up of jsonifying the events
+
+    const data = {
+      numberOfUpdates: 1,
+      playerEvents: [
+        {
+          playerId: 1,
+          mouseX: mouseX,
+          mouseY: mouseY,
+          leftMouseClick: isMouseDown,
+          rightMouseClick: isMouseDown,
+          pressedKeys: Array.from(keysPressed)
+        }
+      ]
+    };
+
+    const jsonString = JSON.stringify(data, null, 2);
+    return jsonString;
 }

@@ -9,14 +9,17 @@ public class BrokenPen extends Actor {
 
     public void act() {
         moveTowardsMouse();
-        if (Gui.isMousePressed()) {
+        if (Events.isMousePressed()) {
             drawDot();
         }
     }
 
     public void moveTowardsMouse() {
-        if (Math.hypot(Gui.getMouseX() - getX(), Gui.getMouseY() - getY()) > 1) {
-            turnTowards(Gui.getMouseX(), Gui.getMouseY());
+        double mouseX = Events.getMouseX();
+        double mouseY = Events.getMouseY();
+
+        if (Math.hypot(mouseX - getX(), mouseY - getY()) > 1) {
+            turnTowards(mouseX, mouseY);
             move(1);
             moveTowardsMouse();
             setRotation(0);

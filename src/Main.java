@@ -17,8 +17,24 @@ public class Main {
         double[] xs = {0, 5, 19, 100};
         double[] ys = {40, 20, 10};
         TheaterArt.drawFilledPolygon(xs, ys);
+//
+//        System.out.println(aopsTheater.getState());
+//        System.out.println(aopsTheater.getMethodsJSON(null));
 
-        System.out.println(aopsTheater.getState());
-        System.out.println(aopsTheater.getMethodsJSON(null));
+        String json = "{\n" +
+                "  \"numberOfUpdates\": 1,\n" +
+                "  \"playerEvents\": [\n" +
+                "    {\n" +
+                "      \"playerId\": 1,\n" +
+                "      \"mouseX\": 316,\n" +
+                "      \"mouseY\": 587.265625,\n" +
+                "      \"leftMouseClick\": false,\n" +
+                "      \"rightMouseClick\": false,\n" +
+                "      \"pressedKeys\": []\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n";
+
+        Events.parseJSON(json);
     }
 }
