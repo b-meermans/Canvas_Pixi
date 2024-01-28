@@ -26,14 +26,18 @@ public class Main {
                 "  \"playerEvents\": [\n" +
                 "    {\n" +
                 "      \"playerId\": 1,\n" +
-                "      \"mouseX\": 316,\n" +
-                "      \"mouseY\": 587.265625,\n" +
+                "      \"mouseX\": 440.5,\n" +
+                "      \"mouseY\": 590.265625,\n" +
                 "      \"leftMouseClick\": false,\n" +
                 "      \"rightMouseClick\": false,\n" +
-                "      \"pressedKeys\": []\n" +
+                "      \"pressedKeys\": [\n" +
+                "        \"3\",\n" +
+                "        \"4\",\n" +
+                "        \"5\"\n" +
+                "      ]\n" +
                 "    }\n" +
                 "  ]\n" +
-                "}\n";
+                "}";
 
         Events.parseJSON(json);
     }

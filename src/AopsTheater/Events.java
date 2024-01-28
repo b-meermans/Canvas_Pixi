@@ -38,36 +38,18 @@ public class Events {
         return playerIDToPlayerEvent.get(defaultPlayer).isLeftMouseClick();
     }
 
-    public static boolean isKeyDown(String key) {
-        return playerIDToPlayerEvent.get(defaultPlayer).isKeyPressed(key);
+    public static boolean isKeyPressed(String key) {
+        return playerIDToPlayerEvent.get(defaultPlayer).isKeyPressed(key.toUpperCase());
     }
 
-    public static boolean isKeyDown(int playerID, String key) {
+    public static boolean isKeyPressed(int playerID, String key) {
         key = key.toUpperCase();
         PlayerEvent playerEvent = playerIDToPlayerEvent.getOrDefault(playerID, null);
         return playerEvent != null && playerEvent.isKeyPressed(key);
     }
 
     public static void parseJSON(String jsonInput) {
-        // TODO Need to figure this out for real.
-
-//        numUpdates = 1;
-//
-//        HashSet<String> keys = new HashSet<>();
-//        if (Math.random() < 0.2) {
-//            keys.add("up");
-//        }
-//
-//        // Create a new PlayerEvent and add it to the list
-//        PlayerEvent playerEvent = new PlayerEvent.Builder()
-//                .mouseX(500)
-//                .mouseY(500)
-//                .leftMouseClick(true)
-//                .rightMouseClick(true)
-//                .pressedKeys(keys)
-//                .build();
-//
-//        playerIDToPlayerEvent.put(1, playerEvent);
+        // TODO Really want to use a JSON library.
 
         int lineIndex = -1;
         String[] lines = jsonInput.split("\n");
@@ -106,10 +88,13 @@ public class Events {
                                         playerBuilder.rightMouseClick(Boolean.parseBoolean(value.replaceAll(",", "")));
                                         break;
                                     case "pressedKeys":
-                                        String[] keysArray = value.substring(1, value.length() - 1).split(",");
                                         Set<String> keysList = new HashSet<>();
-                                        for (String keyItem : keysArray) {
-                                            keysList.add(keyItem.trim().replace("\"", ""));
+                                        if (value.contains("]")) {
+                                            break;
+                                        }
+
+                                        while (!(line = lines[++lineIndex].trim()).startsWith("]")) {
+                                            keysList.add(line.replaceAll("[,\"]", "").toUpperCase());
                                         }
                                         playerBuilder.pressedKeys(keysList);
                                         break;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Stage {
+    // TODO Add in removing objects
+
     private static final String DEFAULT_IMAGE = "dots.png";
 
     private final int width;
