@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class JsonHandler {
-    static String invokeMethod(Director director, String json) {
+    static JSONObject invokeMethod(Director director, String json) {
         JSONParser parser = new JSONParser();
 
         String uuid = null;
@@ -83,24 +83,24 @@ class JsonHandler {
             if (returnType.equals(Void.TYPE)) {
                 // Nothing to add as a result to the JSON
                 method.invoke(targetObject, args.toArray());
-                return null;
+                return director.getState();
             } else {
                 // Something was returned, we'll get a String representation to add to the JSON
                 Object result = method.invoke(targetObject, args.toArray());
 
+                JSONObject jsonObject = director.getState();
+
                 if (result instanceof AopsTheaterComponent) {
-                    return ((AopsTheaterComponent) result).getUUID();
+                    jsonObject.put("returned_uuid", ((AopsTheaterComponent) result).getUUID());
                 }
-
-                // TODO Add other Object types, ie: arrays
-
-                return result.toString();
+                else {
+                    jsonObject.put("returned", result.toString());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return null;
     }
-
-
 }

@@ -56,7 +56,7 @@ public class AopsTheater {
      * @return a json file representing the state of the theater or null if a failure occurred
      */
     public String invokeMethod(String json) {
-        return AopsTheaterHandler.invokeMethod(director, json);
+        return AopsTheaterHandler.invokeMethod(director, json).toJSONString();
     }
 
     /**
@@ -70,7 +70,7 @@ public class AopsTheater {
         }
 
         Events.reset();
-        return director.getState();
+        return director.getState().toJSONString();
     }
 
     /**

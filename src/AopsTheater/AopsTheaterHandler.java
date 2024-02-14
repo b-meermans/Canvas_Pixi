@@ -84,19 +84,24 @@ public class AopsTheaterHandler {
         resetTimers();
 
         try {
-            return director.getState();
+            return director.getState().toJSONString();
         } catch (Exception e) {
             printStackTrace(e);
             return null;
         }
    }
 
-   static String invokeMethod(Director director, String json) {
+   static JSONObject invokeMethod(Director director, String json) {
        resetTimers();
 
        String result = JsonHandler.invokeMethod(director, json);
+       JSONObject jsonObject = director.getState();
 
-       return director.getState();
+       if (result != null) {
+           jsonObject.put("returned", result);
+       }
+
+       return jsonObject;
    }
 
     static int nextZ() {
@@ -135,7 +140,7 @@ public class AopsTheaterHandler {
 
         try {
             director.update();
-            return director.getState();
+            return director.getState().toJSONString();
         } catch (Exception e) {
             printStackTrace(e);
             return null;

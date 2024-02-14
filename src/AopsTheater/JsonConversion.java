@@ -1,134 +1,111 @@
 package AopsTheater;
 
+import JsonSimple.JSONArray;
+import JsonSimple.JSONObject;
+
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
 public class JsonConversion {
 
-    static String getStateJson(Stage stage) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{")
-                .append("\"stage\":").append(convertToJson(stage)).append(",")
-                .append("\"actors\":").append(getActorJson(stage.getActors())).append(",")
-                .append("\"texts\":").append(getTextJson(stage.getTexts())).append(",")
-                .append("\"sounds\":").append(getSoundJson(stage.getSounds())).append(",")
-                .append("\"shapes\":").append(TheaterArt.getShapes())
-                .append("}");
-        return jsonBuilder.toString();
+    static JSONObject getStateJson(Stage stage) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("stage", convertToJson(stage));
+        jsonObject.put("actors", getActorJson(stage.getActors()));
+        jsonObject.put("texts", getTextJson(stage.getTexts()));
+        jsonObject.put("sounds", getSoundJson(stage.getSounds()));
+        jsonObject.put("shapes", TheaterArt.getShapes()); // Assuming getShapes() returns a JSON compatible object
+        return jsonObject;
     }
 
-    private static String getActorJson(List<Actor> actors) {
-        StringBuilder actorBuilder = new StringBuilder("[");
+    private static JSONArray getActorJson(List<Actor> actors) {
+        JSONArray jsonArray = new JSONArray();
         for (Actor actor : actors) {
-            actorBuilder.append(JsonConversion.convertToJson(actor)).append(",");
+            jsonArray.add(convertToJson(actor));
         }
-        actorBuilder.deleteCharAt(actorBuilder.length() - 1);
-        actorBuilder.append("]");
-
-        return actorBuilder.toString();
+        return jsonArray;
     }
 
-    private static String getTextJson(List<Text> texts) {
-        StringBuilder textBuilder = new StringBuilder("[");
+    private static JSONArray getTextJson(List<Text> texts) {
+        JSONArray jsonArray = new JSONArray();
         for (Text text : texts) {
-            textBuilder.append(JsonConversion.convertToJson(text)).append(",");
+            jsonArray.add(convertToJson(text));
         }
-        textBuilder.deleteCharAt(textBuilder.length() - 1);
-        textBuilder.append("]");
-
-        return textBuilder.toString();
+        return jsonArray;
     }
 
-    private static String getSoundJson(List<Sound> sounds) {
-        StringBuilder textBuilder = new StringBuilder("[");
+    private static JSONArray getSoundJson(List<Sound> sounds) {
+        JSONArray jsonArray = new JSONArray();
         for (Sound sound : sounds) {
-            textBuilder.append(JsonConversion.convertToJson(sound)).append(",");
+            jsonArray.add(convertToJson(sound));
         }
-        textBuilder.deleteCharAt(textBuilder.length() - 1);
-        textBuilder.append("]");
-
-        return textBuilder.toString();
+        return jsonArray;
     }
 
-    private static String convertToJson(Stage stage) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
-        appendField(jsonBuilder, "width", stage.getWidth());
-        appendField(jsonBuilder, "height", stage.getHeight());
-        appendField(jsonBuilder, "image", stage.getImage());
-
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
-        return jsonBuilder.toString();
+    private static JSONObject convertToJson(Stage stage) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("width", stage.getWidth());
+        jsonObject.put("height", stage.getHeight());
+        jsonObject.put("image", stage.getImage());
+        return jsonObject;
     }
 
-    private static String convertToJson(Text text) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
+    private static JSONObject convertToJson(Text text) {
+        JSONObject jsonObject = new JSONObject();
 
-        appendField(jsonBuilder, "uuid", text.getUUID());
-        appendField(jsonBuilder, "x", text.getX());
-        appendField(jsonBuilder, "y", text.getY());
-        appendField(jsonBuilder, "z", text.getZ());
-        appendField(jsonBuilder, "rotation", text.getRotation());
-        appendField(jsonBuilder, "text", text.getText());
-        appendField(jsonBuilder, "italic", text.isItalic());
-        appendField(jsonBuilder, "bold", text.isBold());
-        appendField(jsonBuilder, "underlined", text.isUnderlined());
-        appendField(jsonBuilder, "wordWrap", text.isWordWrap());
-        appendField(jsonBuilder, "wordWrapWidth", text.getWordWrapWidth());
-        appendField(jsonBuilder, "color", text.getFontColor());
-        appendField(jsonBuilder, "font", text.getFont());
-        appendField(jsonBuilder, "alignment", text.getAlignment());
+        jsonObject.put("uuid", text.getUUID());
+        jsonObject.put("x", text.getX());
+        jsonObject.put("y", text.getY());
+        jsonObject.put("z", text.getZ());
+        jsonObject.put("rotation", text.getRotation());
+        jsonObject.put("text", text.getContent());
+        jsonObject.put("italic", text.isItalic());
+        jsonObject.put("bold", text.isBold());
+        jsonObject.put("underlined", text.isUnderlined());
+        jsonObject.put("wordWrap", text.isWordWrap());
+        jsonObject.put("wordWrapWidth", text.getWordWrapWidth());
+        jsonObject.put("color", colorToInt(text.getFontColor()));
+        jsonObject.put("font", text.getFont().toString());
+        jsonObject.put("alignment", text.getAlignment().toString());
 
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
-
-        return jsonBuilder.toString();
+        return jsonObject;
     }
 
-    private static String convertToJson(Actor actor) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
 
+    private static JSONObject convertToJson(Actor actor) {
+        JSONObject jsonObject = new JSONObject();
 
-        appendField(jsonBuilder, "uuid", actor.getUUID());
-        appendField(jsonBuilder, "x", actor.getX());
-        appendField(jsonBuilder, "y", actor.getY());
-        appendField(jsonBuilder, "z", actor.getZ());
-        appendField(jsonBuilder, "rotation", actor.getRotation());
-        appendField(jsonBuilder, "image", actor.getImage());
-        appendField(jsonBuilder, "width", actor.getWidth());
-        appendField(jsonBuilder, "height", actor.getHeight());
-        appendField(jsonBuilder, "tint", actor.getTint());
-        appendField(jsonBuilder, "alpha", actor.getAlpha());
+        jsonObject.put("uuid", actor.getUUID());
+        jsonObject.put("x", actor.getX());
+        jsonObject.put("y", actor.getY());
+        jsonObject.put("z", actor.getZ());
+        jsonObject.put("rotation", actor.getRotation());
+        jsonObject.put("image", actor.getImage());
+        jsonObject.put("width", actor.getWidth());
+        jsonObject.put("height", actor.getHeight());
+        jsonObject.put("tint", colorToInt(actor.getTint()));
+        jsonObject.put("alpha", actor.getAlpha());
 
         if (actor instanceof AnimatedActor) {
             AnimatedActor animatedActor = (AnimatedActor) actor;
-            appendField(jsonBuilder, "animated", animatedActor.isPlaying());
+            jsonObject.put("animated", animatedActor.isPlaying());
         }
 
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
-
-        return jsonBuilder.toString();
+        return jsonObject;
     }
 
-    private static String convertToJson(Sound sound) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
+    private static JSONObject convertToJson(Sound sound) {
+        JSONObject jsonObject = new JSONObject();
 
-        appendField(jsonBuilder, "uuid", sound.getUUID());
-        appendField(jsonBuilder, "fileName", sound.getFileName());
-        appendField(jsonBuilder, "volume", sound.getVolume());
-        appendField(jsonBuilder, "status", sound.getStatus());
+        jsonObject.put("uuid", sound.getUUID());
+        jsonObject.put("fileName", sound.getFileName());
+        jsonObject.put("volume", sound.getVolume());
+        jsonObject.put("status", sound.getStatus().toString());
 
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
-
-        return jsonBuilder.toString();
+        return jsonObject;
     }
+
 
     static void appendField(StringBuilder builder, String fieldName, String fieldValue) {
         builder.append("\"").append(fieldName).append("\":\"").append(fieldValue).append("\",");
@@ -154,5 +131,4 @@ public class JsonConversion {
     static int colorToInt(Color color) {
         return color.getRGB() & 0xFFFFFF;
     }
-
 }

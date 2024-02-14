@@ -12,7 +12,7 @@ public class Text extends AopsTheaterComponent {
     private double alpha = 1;
     private boolean isVisible = true;
 
-    private String text;
+    private String content;
 
     private boolean italic;
     private boolean bold;
@@ -25,8 +25,8 @@ public class Text extends AopsTheaterComponent {
     private int size = 16;
     private Alignment alignment = Alignment.LEFT;
 
-    public Text(String text) {
-        this.text = text;
+    public Text(String content) {
+        this.content = content;
     }
 
     public Alignment getAlignment() {
@@ -86,12 +86,12 @@ public class Text extends AopsTheaterComponent {
         this.stage = stage;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setText(String content) {
+        this.content = content;
     }
 
     public int getWordWrapWidth() {
@@ -186,5 +186,10 @@ public class Text extends AopsTheaterComponent {
         LEFT,
         CENTER,
         RIGHT;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 }

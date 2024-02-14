@@ -27,53 +27,53 @@ public class Main {
         double[] xs = {0, 5, 19, 100};
         double[] ys = {40, 20, 10};
         TheaterArt.drawFilledPolygon(xs, ys);
+
+        System.out.println(aopsTheater.getState());
+        System.out.println(aopsTheater.getMethodsJSON(null));
+
+//        String json = "{\n" +
+//                "  \"numberOfUpdates\": 1,\n" +
+//                "  \"playerEvents\": [\n" +
+//                "    {\n" +
+//                "      \"playerId\": 1,\n" +
+//                "      \"mouseX\": 440.5,\n" +
+//                "      \"mouseY\": 590.265625,\n" +
+//                "      \"leftMouseClick\": false,\n" +
+//                "      \"rightMouseClick\": false,\n" +
+//                "      \"pressedKeys\": [\n" +
+//                "        \"3\",\n" +
+//                "        \"4\",\n" +
+//                "        \"5\"\n" +
+//                "      ]\n" +
+//                "    }\n," +
+//                "    {\n" +
+//                "      \"playerId\": 1,\n" +
+//                "      \"mouseX\": 2.5,\n" +
+//                "      \"mouseY\": 590.265625,\n" +
+//                "      \"leftMouseClick\": false,\n" +
+//                "      \"rightMouseClick\": false,\n" +
+//                "      \"pressedKeys\": [\n" +
+//                "        \"3\",\n" +
+//                "        \"4\",\n" +
+//                "        \"5\"\n" +
+//                "      ]\n" +
+//                "    }\n" +
+//                "  ]\n" +
+//                "}";
 //
-//        System.out.println(aopsTheater.getState());
-//        System.out.println(aopsTheater.getMethodsJSON(null));
-
-        String json = "{\n" +
-                "  \"numberOfUpdates\": 1,\n" +
-                "  \"playerEvents\": [\n" +
-                "    {\n" +
-                "      \"playerId\": 1,\n" +
-                "      \"mouseX\": 440.5,\n" +
-                "      \"mouseY\": 590.265625,\n" +
-                "      \"leftMouseClick\": false,\n" +
-                "      \"rightMouseClick\": false,\n" +
-                "      \"pressedKeys\": [\n" +
-                "        \"3\",\n" +
-                "        \"4\",\n" +
-                "        \"5\"\n" +
-                "      ]\n" +
-                "    }\n," +
-                "    {\n" +
-                "      \"playerId\": 1,\n" +
-                "      \"mouseX\": 2.5,\n" +
-                "      \"mouseY\": 590.265625,\n" +
-                "      \"leftMouseClick\": false,\n" +
-                "      \"rightMouseClick\": false,\n" +
-                "      \"pressedKeys\": [\n" +
-                "        \"3\",\n" +
-                "        \"4\",\n" +
-                "        \"5\"\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-
-        String j = "{\n" +
-                "  \"UUID\": \"E28394818123128\",\n" +
-                "  \"method\": \"move\",\n" +
-                "  \"returnType\": \"void\",\n" +
-                "  \"parameters\": [\n" +
-                "    {\n" +
-                "      \"type\": \"double\",\n" +
-                "      \"value\": 45.2\n" +
-                "    }" +
-                "  ]\n" +
-                "}";
-
-        invokeMethod(j);
+//        String j = "{\n" +
+//                "  \"UUID\": \"E28394818123128\",\n" +
+//                "  \"method\": \"move\",\n" +
+//                "  \"returnType\": \"void\",\n" +
+//                "  \"parameters\": [\n" +
+//                "    {\n" +
+//                "      \"type\": \"double\",\n" +
+//                "      \"value\": 45.2\n" +
+//                "    }" +
+//                "  ]\n" +
+//                "}";
+//
+//        invokeMethod(j);
 
     }
 

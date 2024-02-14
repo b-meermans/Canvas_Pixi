@@ -1,5 +1,7 @@
 package AopsTheater;
 
+import JsonSimple.JSONObject;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -31,7 +33,7 @@ public class Director {
         stage.endAct();
     }
 
-    String getState() {
+    JSONObject getState() {
         return JsonConversion.getStateJson(stage);
     }
 
