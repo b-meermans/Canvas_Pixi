@@ -94,7 +94,7 @@ public class AopsTheaterHandler {
    static JSONObject invokeMethod(Director director, String json) {
        resetTimers();
 
-       String result = JsonHandler.invokeMethod(director, json);
+       JSONObject result = JsonHandler.invokeMethod(director, json);
        JSONObject jsonObject = director.getState();
 
        if (result != null) {
