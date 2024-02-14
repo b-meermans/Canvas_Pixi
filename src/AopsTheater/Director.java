@@ -40,6 +40,10 @@ public class Director {
         return stage.getActorByUUID(uuid);
     }
 
+    Stage getStage() {
+        return stage;
+    }
+
     String getMethodsJSON(String uuid) {
         if (uuid == null) {
             return MethodJSONBuilder.methodsToJSON(stage);
@@ -51,9 +55,5 @@ public class Director {
         }
 
         return MethodJSONBuilder.methodsToJSON(actor);
-    }
-
-    String invokeMethod(String json) {
-        return getState();
     }
 }

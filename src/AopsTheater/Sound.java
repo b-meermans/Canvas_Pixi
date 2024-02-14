@@ -1,9 +1,7 @@
 package AopsTheater;
 
-public class Sound {
+public class Sound extends AopsTheaterComponent {
     // TODO Is it important to find the current status of the sound from the front end? Ie: is it playing still?
-
-    String uuid;
 
     private final String fileName;
     private double volume = 1;
@@ -23,11 +21,6 @@ public class Sound {
 
     public Sound(String fileName) {
         this.fileName = fileName;
-        uuid = AopsTheaterHandler.generatedUUID();
-    }
-
-    String getUUId() {
-        return uuid;
     }
 
     public String getFileName() {

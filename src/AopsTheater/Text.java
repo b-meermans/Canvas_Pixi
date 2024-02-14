@@ -2,9 +2,7 @@ package AopsTheater;
 
 import java.awt.*;
 
-public class Text {
-    String uuid;
-
+public class Text extends AopsTheaterComponent {
     private Stage stage;
 
     private double x;
@@ -29,7 +27,6 @@ public class Text {
 
     public Text(String text) {
         this.text = text;
-        uuid = AopsTheaterHandler.generatedUUID();
     }
 
     public Alignment getAlignment() {
@@ -95,10 +92,6 @@ public class Text {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    String getUUID() {
-        return uuid.toString();
     }
 
     public int getWordWrapWidth() {

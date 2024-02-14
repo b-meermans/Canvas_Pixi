@@ -3,7 +3,7 @@ package AopsTheater;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Stage {
+public abstract class Stage extends AopsTheaterComponent {
     // TODO Add in removing objects
 
     private static final String DEFAULT_IMAGE = "dots.png";
@@ -31,7 +31,6 @@ public abstract class Stage {
         texts = new ArrayList<Text>();
         sounds = new ArrayList<Sound>();
     }
-
 
     public void act() {
 

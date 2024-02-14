@@ -4,7 +4,7 @@ import java.util.Set;
 
 import java.util.HashSet;
 
-public class PlayerEvent {
+class PlayerEvent {
     private int id;
     private double mouseX;
     private double mouseY;

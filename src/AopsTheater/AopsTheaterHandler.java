@@ -1,9 +1,18 @@
 package AopsTheater;
 
+import JsonSimple.*;
+import JsonSimple.parser.*;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.UUID;
 
 public class AopsTheaterHandler {
+    // TODO The Z coordinate is not being used yet for layering objects
+
+
 
     /**
      * Holds the current line number executing of the student's code
@@ -44,18 +53,6 @@ public class AopsTheaterHandler {
         }
     }
 
-   static Director buildDirector(String startingStageClassName) {
-       resetTimers();
-       currentZ = 0;
-
-       try {
-           return new Director(startingStageClassName);
-       } catch (Exception e) {
-           printStackTrace(e);
-           return null;
-       }
-   }
-
     public static void changeStatement(int lineNumber) {
         stack.pop();
         stack.push(lineNumber);
@@ -71,8 +68,16 @@ public class AopsTheaterHandler {
         }
     }
 
-    static String generatedUUID() {
-        return UUID.randomUUID().toString();
+    static Director buildDirector(String startingStageClassName) {
+        resetTimers();
+        currentZ = 0;
+
+        try {
+            return new Director(startingStageClassName);
+        } catch (Exception e) {
+            printStackTrace(e);
+            return null;
+        }
     }
 
     static String getState(Director director) {
@@ -87,14 +92,11 @@ public class AopsTheaterHandler {
    }
 
    static String invokeMethod(Director director, String json) {
-        resetTimers();
+       resetTimers();
 
-        try {
-           return director.getState();
-        } catch (Exception e) {
-            printStackTrace(e);
-            return null;
-        }
+       String result = JsonHandler.invokeMethod(director, json);
+
+       return director.getState();
    }
 
     static int nextZ() {

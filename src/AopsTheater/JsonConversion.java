@@ -119,7 +119,7 @@ public class JsonConversion {
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{");
 
-        appendField(jsonBuilder, "uuid", sound.getUUId());
+        appendField(jsonBuilder, "uuid", sound.getUUID());
         appendField(jsonBuilder, "fileName", sound.getFileName());
         appendField(jsonBuilder, "volume", sound.getVolume());
         appendField(jsonBuilder, "status", sound.getStatus());

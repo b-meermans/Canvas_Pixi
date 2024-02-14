@@ -1,13 +1,10 @@
 package AopsTheater;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
 
 import java.awt.*;
 
-public abstract class Actor {
+public abstract class Actor extends AopsTheaterComponent {
     private static final String DEFAULT_IMAGE = "AoPS.png";
-    String uuid;
+
     private Stage stage;
     private double x;
     private double y;
@@ -26,7 +23,6 @@ public abstract class Actor {
 
     public Actor(String image) {
         this.image = image;
-        uuid = AopsTheaterHandler.generatedUUID();
         z = AopsTheaterHandler.nextZ();
     }
 
@@ -80,10 +76,6 @@ public abstract class Actor {
 
     public void setTint(Color tint) {
         this.tint = tint;
-    }
-
-    String getUUID() {
-        return uuid.toString();
     }
 
     public double getWidth() {
