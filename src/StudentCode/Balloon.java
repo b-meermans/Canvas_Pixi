@@ -13,6 +13,7 @@ public class Balloon extends Actor {
     public Balloon() {
         super("balloon.png");
 
+        // TODO Remove the UUID here, it was for testing
         setUuid("A");
     }
 

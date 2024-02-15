@@ -3,6 +3,8 @@ package AopsTheater;//
 import java.awt.*;
 
 public abstract class Actor extends AopsTheaterComponent {
+    // TODO Adjust tint to use a number instead of a color?
+
     private static final String DEFAULT_IMAGE = "AoPS.png";
 
     private Stage stage;
