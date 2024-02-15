@@ -22,7 +22,7 @@ class JsonHandler {
             JSONObject jsonObject = (JSONObject) parser.parse(json);
 
             uuid = (String) jsonObject.get("UUID");
-            targetObject = director.getSpriteByUUID(uuid);
+            targetObject = director.getComponentByUUID(uuid);
             if (targetObject == null) {
                 targetObject = director.getStage();
             }

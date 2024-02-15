@@ -49,7 +49,7 @@ public class Events {
     }
 
     public static void parseJSON(String jsonInput) {
-        // TODO Really want to use a JSON library.
+        // TODO Switch to JSON Parser
 
         int lineIndex = -1;
         String[] lines = jsonInput.split("\n");

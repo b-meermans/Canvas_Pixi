@@ -156,8 +156,12 @@ public class Text extends AopsTheaterComponent {
         this.y = y;
     }
 
-    void setVisible(boolean isVisible) {
+    public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
+    }
+
+    public boolean isVisible() {
+        return isVisible;
     }
 
     public String toString() {

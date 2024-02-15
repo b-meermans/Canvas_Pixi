@@ -12,8 +12,6 @@ import java.util.UUID;
 public class AopsTheaterHandler {
     // TODO The Z coordinate is not being used yet for layering objects
 
-
-
     /**
      * Holds the current line number executing of the student's code
      */

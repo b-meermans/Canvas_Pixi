@@ -38,8 +38,8 @@ public class Director {
     }
 
 
-    Actor getSpriteByUUID(String uuid) {
-        return stage.getActorByUUID(uuid);
+    AopsTheaterComponent getComponentByUUID(String uuid) {
+        return stage.getComponentByUUID(uuid);
     }
 
     Stage getStage() {
@@ -51,7 +51,7 @@ public class Director {
             return MethodJSONBuilder.methodsToJSON(stage);
         }
 
-        Actor actor = getSpriteByUUID(uuid);
+        AopsTheaterComponent actor = getComponentByUUID(uuid);
         if (actor == null) {
             return null;
         }

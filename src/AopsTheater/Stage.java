@@ -85,12 +85,25 @@ public abstract class Stage extends AopsTheaterComponent {
         addedActors.clear();
     }
 
-    Actor getActorByUUID(String uuid) {
+    AopsTheaterComponent getComponentByUUID(String uuid) {
+        // TODO All UUIDs go into a Map - make this much quicker
+
+        if (uuid.equals(getUUID())) {
+            return this;
+        }
+
         for (Actor a: actors) {
-            if (a.uuid.equals(uuid)) {
+            if (uuid.equals(a.getUUID())) {
                 return a;
             }
         }
+
+        for (Text t: texts) {
+            if (uuid.equals(t.getUUID())) {
+                return t;
+            }
+        }
+
         return null;
     }
 }

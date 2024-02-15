@@ -112,6 +112,10 @@ public abstract class Actor extends AopsTheaterComponent {
         this.isVisible = isVisible;
     }
 
+    public boolean isVisible() {
+        return isVisible;
+    }
+
     public void turn(double degrees) {
         rotation += degrees;
     }

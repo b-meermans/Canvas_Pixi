@@ -22,7 +22,9 @@ public class JsonConversion {
     private static JSONArray getActorJson(List<Actor> actors) {
         JSONArray jsonArray = new JSONArray();
         for (Actor actor : actors) {
-            jsonArray.add(convertToJson(actor));
+            if (actor.isVisible()) {
+                jsonArray.add(convertToJson(actor));
+            }
         }
         return jsonArray;
     }
@@ -30,7 +32,9 @@ public class JsonConversion {
     private static JSONArray getTextJson(List<Text> texts) {
         JSONArray jsonArray = new JSONArray();
         for (Text text : texts) {
-            jsonArray.add(convertToJson(text));
+            if (text.isVisible()) {
+                jsonArray.add(convertToJson(text));
+            }
         }
         return jsonArray;
     }
