@@ -12,4 +12,9 @@ public abstract class AopsTheaterComponent {
     String getUUID() {
         return uuid.toString();
     }
+
+    // TODO Remove this - just for testing purposes
+    public void setUuid(String val) {
+        uuid = val;
+    }
 }

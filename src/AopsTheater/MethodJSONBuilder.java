@@ -1,18 +1,20 @@
 package AopsTheater;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import JsonSimple.JSONArray;
+import JsonSimple.JSONObject;
+
+import java.lang.reflect.*;
 import java.util.*;
 
 public class MethodJSONBuilder {
     public static String methodsToJSON(Object object) {
-        StringBuilder jsonBuilder = new StringBuilder("{");
+        JSONObject classMethods = new JSONObject();
 
         Class<?> clazz = object.getClass();
         Set<String> methodSignatures = new HashSet<>();
 
         while (clazz != null) {
-            jsonBuilder.append("\"").append(getSimpleClassName(clazz)).append("\": {");
+            JSONObject methodsJson = new JSONObject();
 
             Method[] methods = clazz.getDeclaredMethods();
             Arrays.stream(methods)
@@ -21,37 +23,26 @@ public class MethodJSONBuilder {
                     .forEach(method -> {
                         String methodSignature = getMethodSignature(method);
                         if (!methodSignatures.contains(methodSignature)) {
-                            jsonBuilder.append("\"").append(method.getName()).append("\": {");
-                            jsonBuilder.append("\"returnType\": \"").append(getTypeString(method.getReturnType())).append("\", ");
-                            jsonBuilder.append("\"parameterTypes\": [");
+                            JSONObject methodDetails = new JSONObject();
+                            methodDetails.put("returnType", getTypeString(method.getGenericReturnType()));
+
+                            JSONArray parameterTypesArray = new JSONArray();
                             Class<?>[] parameterTypes = method.getParameterTypes();
-                            for (int i = 0; i < parameterTypes.length; i++) {
-                                jsonBuilder.append("\"").append(getTypeString(parameterTypes[i])).append("\"");
-                                if (i < parameterTypes.length - 1) {
-                                    jsonBuilder.append(", ");
-                                }
+                            for (Class<?> paramType : parameterTypes) {
+                                parameterTypesArray.add(getTypeString(paramType));
                             }
-                            jsonBuilder.append("]");
-                            jsonBuilder.append("}, ");
+                            methodDetails.put("parameterTypes", parameterTypesArray);
+
+                            methodsJson.put(method.getName(), methodDetails);
                             methodSignatures.add(methodSignature);
                         }
                     });
 
-            if (jsonBuilder.charAt(jsonBuilder.length() - 2) == ',') {
-                jsonBuilder.deleteCharAt(jsonBuilder.length() - 2);
-            }
-
-            jsonBuilder.append("}, ");
+            classMethods.put(getSimpleClassName(clazz), methodsJson);
             clazz = clazz.getSuperclass();
         }
 
-        if (jsonBuilder.charAt(jsonBuilder.length() - 2) == ',') {
-            jsonBuilder.deleteCharAt(jsonBuilder.length() - 2);
-        }
-
-        jsonBuilder.append("}");
-
-        return jsonBuilder.toString();
+        return classMethods.toJSONString();
     }
 
     private static String getSimpleClassName(Class<?> clazz) {
@@ -60,12 +51,30 @@ public class MethodJSONBuilder {
         return (lastDotIndex == -1) ? className : className.substring(lastDotIndex + 1);
     }
 
-    private static String getTypeString(Class<?> type) {
-        if (type.isArray()) {
-            Class<?> componentType = type.getComponentType();
-            return getSimpleClassName(componentType) + "[]";
+    private static String getTypeString(Type type) {
+        if (type instanceof Class<?>) {
+            Class<?> typeClass = (Class<?>) type;
+            if (typeClass.isArray()) {
+                return getSimpleClassName(typeClass.getComponentType()) + "[]";
+            } else {
+                return getSimpleClassName(typeClass);
+            }
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType paramType = (ParameterizedType) type;
+            Type[] typeArguments = paramType.getActualTypeArguments();
+            StringJoiner typeArgsString = new StringJoiner(", ");
+
+            for (Type argType : typeArguments) {
+                typeArgsString.add(argType.getTypeName());
+            }
+
+            return getSimpleClassName((Class<?>) paramType.getRawType()) + "<" + typeArgsString + ">";
+        } else if (type instanceof TypeVariable) {
+            // Handle generic type variables (like T in List<T>)
+            TypeVariable<?> typeVar = (TypeVariable<?>) type;
+            return typeVar.getName();
         } else {
-            return getSimpleClassName(type);
+            return type.toString();
         }
     }
 

@@ -12,6 +12,8 @@ public class Balloon extends Actor {
 
     public Balloon() {
         super("balloon.png");
+
+        setUuid("A");
     }
 
 

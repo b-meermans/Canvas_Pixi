@@ -16,21 +16,23 @@ public class Main {
     public static void main(String[] args) throws ParseException {
         AopsTheater aopsTheater = AopsTheater.build();
 
+//
+//        TheaterArt.drawEllipse(0, 0, 100, 200.5);
+//        TheaterArt.drawFilledEllipse(0, 0, 100, 200.5);
+//        TheaterArt.drawLine(30, 40, -20, 50);
+//        TheaterArt.setBorderColor(Color.GREEN);
+//        TheaterArt.drawFilledRectangle(1, 1, 3, 3);
+//        TheaterArt.drawRoundedRectangle(1, 1, 3, 3, 1);
+//
+//        double[] xs = {0, 5, 19, 100};
+//        double[] ys = {40, 20, 10};
+//        TheaterArt.drawFilledPolygon(xs, ys);
 
-        TheaterArt.drawEllipse(0, 0, 100, 200.5);
-        TheaterArt.drawFilledEllipse(0, 0, 100, 200.5);
-        TheaterArt.drawLine(30, 40, -20, 50);
-        TheaterArt.setBorderColor(Color.GREEN);
-        TheaterArt.drawFilledRectangle(1, 1, 3, 3);
-        TheaterArt.drawRoundedRectangle(1, 1, 3, 3, 1);
 
-        double[] xs = {0, 5, 19, 100};
-        double[] ys = {40, 20, 10};
-        TheaterArt.drawFilledPolygon(xs, ys);
+//        System.out.println(aopsTheater.getState());
+//        System.out.println(aopsTheater.getMethodsJSON("A"));
 
-        System.out.println(aopsTheater.getState());
-        System.out.println(aopsTheater.getMethodsJSON(null));
-
+//
 //        String json = "{\n" +
 //                "  \"numberOfUpdates\": 1,\n" +
 //                "  \"playerEvents\": [\n" +
@@ -73,7 +75,28 @@ public class Main {
 //                "  ]\n" +
 //                "}";
 //
-//        invokeMethod(j);
+//        aopsTheater.invokeMethod("{\n" +
+//                "  \"UUID\": \"A\",\n" +
+//                "  \"method\": \"setLocation\",\n" +
+//                "  \"parameters\": [\n" +
+//                "    {\n" +
+//                "      \"type\": \"double\",\n" +
+//                "      \"value\": 200\n" +
+//                "    },\n" +
+//                "    {\n" +
+//                "      \"type\": \"double\",\n" +
+//                "      \"value\": 100\n" +
+//                "    }\n" +
+//                "  ]\n" +
+//                "}");
+
+        String result = aopsTheater.invokeMethod("{\n" +
+                "  \"UUID\": \"A\",\n" +
+                "  \"method\": \"getX\",\n" +
+                "  \"parameters\": []\n" +
+                "}");
+
+        //System.out.println(result);
 
     }
 

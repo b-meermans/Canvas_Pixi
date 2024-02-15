@@ -15,6 +15,7 @@ class JsonHandler {
         String uuid = null;
         String methodName = null;
         Object targetObject = null;
+        List<Class<?>> types = new ArrayList<>();
         List<Object> args = new ArrayList<>();
 
         try {
@@ -36,38 +37,71 @@ class JsonHandler {
 
                 switch (type) {
                     case "int":
+                        types.add(int.class);
+                        args.add(((Number) value).intValue());
+                        break;
                     case "Integer":
-                        args.add((Integer) value);
+                        types.add(Integer.class);
+                        args.add(((Number) value).intValue());
                         break;
                     case "double":
-                    case "Double:":
-                        args.add((Double) value);
+                        types.add(double.class);
+                        args.add(((Number) value).doubleValue());
+                        break;
+                    case "Double":
+                        types.add(Double.class);
+                        args.add(((Number) value).doubleValue());
                         break;
                     case "float":
+                        types.add(float.class);
+                        args.add(((Number) value).floatValue());
+                        break;
                     case "Float":
-                        args.add((Float) value);
+                        types.add(Float.class);
+                        args.add(((Number) value).floatValue());
                         break;
                     case "short":
+                        types.add(short.class);
+                        args.add(((Number) value).shortValue());
+                        break;
                     case "Short":
-                        args.add((Short) value);
+                        types.add(Short.class);
+                        args.add(((Number) value).shortValue());
                         break;
                     case "long":
+                        types.add(long.class);
+                        args.add(((Number) value).longValue());
+                        break;
                     case "Long":
-                        args.add((Long) value);
+                        types.add(Long.class);
+                        args.add(((Number) value).longValue());
                         break;
                     case "byte":
+                        types.add(byte.class);
+                        args.add(((Number) value).byteValue());
+                        break;
                     case "Byte":
-                        args.add((Byte) value);
+                        types.add(Byte.class);
+                        args.add(((Number) value).byteValue());
                         break;
                     case "char":
+                        types.add(char.class);
+                        args.add(value);
+                        break;
                     case "Character":
-                        args.add((Character) value);
+                        types.add(Character.class);
+                        args.add(value);
                         break;
                     case "boolean":
+                        types.add(boolean.class);
+                        args.add(value);
+                        break;
                     case "Boolean":
-                        args.add((Boolean) value);
+                        types.add(Boolean.class);
+                        args.add(value);
                         break;
                     default:
+                        types.add(Class.forName(type));
                         args.add(value);
                 }
             }
@@ -77,7 +111,12 @@ class JsonHandler {
 
 
         try {
-            Method method = targetObject.getClass().getMethod(methodName, args.toArray(new Class[0]));
+            Class<?>[] parameterTypes = new Class<?>[types.size()];
+            for (int i = 0; i < args.size(); i++) {
+                parameterTypes[i] = types.get(i);
+            }
+
+            Method method = targetObject.getClass().getMethod(methodName, parameterTypes);
             Class returnType = method.getReturnType();
 
             if (returnType.equals(Void.TYPE)) {
@@ -87,15 +126,17 @@ class JsonHandler {
             } else {
                 // Something was returned, we'll get a String representation to add to the JSON
                 Object result = method.invoke(targetObject, args.toArray());
-
                 JSONObject jsonObject = director.getState();
 
+                // If the return was something with a UUID, we'll add a UUID to the json, otherwise, just the String
                 if (result instanceof AopsTheaterComponent) {
                     jsonObject.put("returned_uuid", ((AopsTheaterComponent) result).getUUID());
                 }
                 else {
                     jsonObject.put("returned", result.toString());
                 }
+
+                return jsonObject;
             }
         } catch (Exception e) {
             e.printStackTrace();

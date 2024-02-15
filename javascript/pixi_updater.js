@@ -194,6 +194,9 @@ async function onRightClick() {
 
 async function onClick() {
     if (!isRunning) {
+        const json = await aopsTheater.invokeMethod(jsonifyDummyMethod());
+        updatePIXI(json);
+        console.log(json);
 //        // Grabs all of the method names, comes back as an object [] for now.
 //        // As the demo, the array has index 0 as the class name
 //        // The next indices are the methods under that class.
@@ -338,6 +341,49 @@ function jsonify() {
         }
       ]
     };
+
+    const jsonString = JSON.stringify(data, null, 2);
+    return jsonString;
+}
+
+function jsonifyDummyMethod() {
+//     const data = {
+//       UUID: "A",
+//       method: "move",
+//       parameters: [
+//         {
+//           type: "double",
+//           value: 4.2
+//         }
+//       ]
+//     };
+
+//      const data = {
+//        UUID: "A",
+//        method: "setLocation",
+//        parameters: [
+//          {
+//            type: "double",
+//            value: 200,
+//          },
+//          {
+//            type: "double",
+//            value: 100
+//          }
+//        ]
+//      };
+
+//     const data = {
+//       UUID: "A",
+//       method: "getX",
+//       parameters: []
+//     };
+//
+      const data = {
+        UUID: "A",
+        method: "getStage",
+        parameters: []
+      };
 
     const jsonString = JSON.stringify(data, null, 2);
     return jsonString;

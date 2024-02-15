@@ -95,7 +95,6 @@ public class AopsTheaterHandler {
        resetTimers();
 
        JSONObject result = JsonHandler.invokeMethod(director, json);
-
        return result;
    }
 

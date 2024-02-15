@@ -87,7 +87,7 @@ public abstract class Stage extends AopsTheaterComponent {
 
     Actor getActorByUUID(String uuid) {
         for (Actor a: actors) {
-            if (a.uuid.toString().equals(uuid)) {
+            if (a.uuid.equals(uuid)) {
                 return a;
             }
         }
