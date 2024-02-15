@@ -1,13 +1,14 @@
 package AopsTheater;
 
+import JsonSimple.JSONArray;
+import JsonSimple.JSONObject;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TheaterArt {
-    // TODO Remove the JSON calculations from here and put the in JsonConversion
-
-    private static List<String> shapes = new ArrayList<>();
+    private static final JSONArray shapes = new JSONArray();
     private static Color fillColor = Color.WHITE;
     private static Color borderColor = Color.BLACK;
     private static Color lineColor = Color.BLACK;
@@ -18,30 +19,35 @@ public class TheaterArt {
         shapes.clear();
     }
 
+    private static void addShape(JSONObject shape) {
+        shapes.add(shape);
+    }
+
+    private static JSONObject createBaseShape(String type) {
+        JSONObject shape = new JSONObject();
+        shape.put("type", type);
+        shape.put("borderColor", JsonConversion.colorToInt(borderColor));
+        shape.put("thickness", thickness);
+        shape.put("alpha", alpha);
+        return shape;
+    }
+
     public static void drawEllipse(double x, double y, double width, double height) {
         drawEllipse(x, y, width, height, false);
     }
 
     private static void drawEllipse(double x, double y, double width, double height, boolean isFilled) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
-
-        JsonConversion.appendField(jsonBuilder, "type", "ellipse");
-        JsonConversion.appendField(jsonBuilder, "x", x);
-        JsonConversion.appendField(jsonBuilder, "y", y);
-        JsonConversion.appendField(jsonBuilder, "width", width);
-        JsonConversion.appendField(jsonBuilder, "height", height);
-        JsonConversion.appendField(jsonBuilder, "borderColor", borderColor);
-        JsonConversion.appendField(jsonBuilder, "thickness", thickness);
-        JsonConversion.appendField(jsonBuilder, "alpha", alpha);
+        JSONObject ellipse = createBaseShape("ellipse");
+        ellipse.put("x", x);
+        ellipse.put("y", y);
+        ellipse.put("width", width);
+        ellipse.put("height", height);
 
         if (isFilled) {
-            JsonConversion.appendField(jsonBuilder, "fillColor", fillColor);
+            ellipse.put("fillColor", JsonConversion.colorToInt(fillColor));
         }
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
 
-        shapes.add(jsonBuilder.toString());
+        addShape(ellipse);
     }
 
     public static void drawFilledEllipse(double x, double y, double width, double height) {
@@ -61,20 +67,17 @@ public class TheaterArt {
     }
 
     public static void drawLine(double x1, double y1, double x2, double y2) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
-        JsonConversion.appendField(jsonBuilder, "type", "line");
-        JsonConversion.appendField(jsonBuilder, "x1", x1);
-        JsonConversion.appendField(jsonBuilder, "y1", y1);
-        JsonConversion.appendField(jsonBuilder, "x2", x2);
-        JsonConversion.appendField(jsonBuilder, "y2", y2);
-        JsonConversion.appendField(jsonBuilder, "color", lineColor);
-        JsonConversion.appendField(jsonBuilder, "width", thickness);
-        JsonConversion.appendField(jsonBuilder, "alpha", alpha);
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");;
+        JSONObject line = new JSONObject();
+        line.put("type", "line");
+        line.put("x1", x1);
+        line.put("y1", y1);
+        line.put("x2", x2);
+        line.put("y2", y2);
+        line.put("color", JsonConversion.colorToInt(lineColor));
+        line.put("width", thickness);
+        line.put("alpha", alpha);
 
-        shapes.add(jsonBuilder.toString());
+        addShape(line);
     }
 
     public static void drawPolygon(double[] xs, double[] ys) {
@@ -82,59 +85,46 @@ public class TheaterArt {
     }
 
     private static void drawPolygon(double[] xs, double[] ys, boolean isFilled) {
-        int length = Math.min(xs.length, ys.length) * 2;
-        double[] mergedCoordinates = new double[length];
+        int length = Math.min(xs.length, ys.length);
+        JSONArray coordinates = new JSONArray();
 
-        for (int i = 0, j = 0, k = 0; k < length; k++) {
-            mergedCoordinates[k] = (k % 2 == 0) ? xs[i++] : ys[j++];
+        for (int i = 0; i < length; i++) {
+            JSONArray point = new JSONArray();
+            point.add(xs[i]);
+            point.add(ys[i]);
+            coordinates.add(point);
         }
 
-
-
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
-
-        JsonConversion.appendField(jsonBuilder, "type", "polygon");
-        JsonConversion.appendField(jsonBuilder, "coordinates", mergedCoordinates);
-        JsonConversion.appendField(jsonBuilder, "borderColor", borderColor);
-        JsonConversion.appendField(jsonBuilder, "thickness", thickness);
-        JsonConversion.appendField(jsonBuilder, "alpha", alpha);
+        JSONObject polygon = createBaseShape("polygon");
+        polygon.put("coordinates", coordinates);
 
         if (isFilled) {
-            JsonConversion.appendField(jsonBuilder, "fillColor", fillColor);
+            polygon.put("fillColor", JsonConversion.colorToInt(fillColor));
         }
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
 
-        shapes.add(jsonBuilder.toString());
+        addShape(polygon);
     }
 
     private static void drawRect(double x, double y, double width, double height, double radius, boolean isFilled) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{");
+        JSONObject rectangle;
 
         if (radius > 0) {
-            JsonConversion.appendField(jsonBuilder, "type", "roundedrectangle");
-            JsonConversion.appendField(jsonBuilder, "radius", radius);
+            rectangle = createBaseShape("roundedrectangle");
+            rectangle.put("radius", radius);
         } else {
-            JsonConversion.appendField(jsonBuilder, "type", "rectangle");
+            rectangle = createBaseShape("rectangle");
         }
 
-        JsonConversion.appendField(jsonBuilder, "x", x);
-        JsonConversion.appendField(jsonBuilder, "y", y);
-        JsonConversion.appendField(jsonBuilder, "width", width);
-        JsonConversion.appendField(jsonBuilder, "height", height);
-        JsonConversion.appendField(jsonBuilder, "borderColor", borderColor);
-        JsonConversion.appendField(jsonBuilder, "thickness", thickness);
-        JsonConversion.appendField(jsonBuilder, "alpha", alpha);
+        rectangle.put("x", x);
+        rectangle.put("y", y);
+        rectangle.put("width", width);
+        rectangle.put("height", height);
 
         if (isFilled) {
-            JsonConversion.appendField(jsonBuilder, "fillColor", fillColor);
+            rectangle.put("fillColor", JsonConversion.colorToInt(fillColor));
         }
-        jsonBuilder.deleteCharAt(jsonBuilder.length() - 1);
-        jsonBuilder.append("}");
 
-        shapes.add(jsonBuilder.toString());
+        addShape(rectangle);
     }
 
     public static void drawRectangle(double x, double y, double width, double height) {
@@ -169,7 +159,7 @@ public class TheaterArt {
         TheaterArt.lineColor = lineColor;
     }
 
-    static List<String> getShapes() {
+    static JSONArray getShapes() {
         return shapes;
     }
 
@@ -188,6 +178,4 @@ public class TheaterArt {
     public void setAlpha(double alpha) {
         this.alpha = Math.max(0.0, Math.min(1.0, alpha));
     }
-
-
 }
