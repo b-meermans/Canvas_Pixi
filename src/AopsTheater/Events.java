@@ -8,6 +8,8 @@ public class Events {
     private static Integer defaultPlayer = 1;
     private static Map<Integer, PlayerEvent> playerIDToPlayerEvent;
 
+    private static long lastResetTime = 0;
+
     static void reset() {
         numUpdates = 1;
         if (playerIDToPlayerEvent == null) {
@@ -15,6 +17,8 @@ public class Events {
         } else {
             playerIDToPlayerEvent.clear();
         }
+
+        lastResetTime = System.currentTimeMillis();
     }
 
     static void fromJSON(String json) {
