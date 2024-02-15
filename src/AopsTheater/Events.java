@@ -83,7 +83,6 @@ public class Events {
             }
         } catch (ParseException e) {
             e.printStackTrace();
-            // Handle parse error
         }
     }
 }

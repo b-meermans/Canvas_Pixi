@@ -110,28 +110,6 @@ public class JsonConversion {
         return jsonObject;
     }
 
-
-    static void appendField(StringBuilder builder, String fieldName, String fieldValue) {
-        builder.append("\"").append(fieldName).append("\":\"").append(fieldValue).append("\",");
-    }
-
-    static void appendField(StringBuilder builder, String fieldName, Color fieldValue) {
-        appendField(builder, fieldName, colorToInt(fieldValue));
-    }
-
-    static void appendField(StringBuilder builder, String fieldName, Enum<?> fieldValue) {
-        builder.append("\"").append(fieldName).append("\":\"").append(fieldValue.name().replace("_", " ")).append("\",");
-    }
-
-    static void appendField(StringBuilder builder, String fieldName, Object fieldValue) {
-        builder.append("\"").append(fieldName).append("\":").append(fieldValue).append(",");
-    }
-
-    static void appendField(StringBuilder builder, String fieldName, double[] values) {
-        builder.append("\"").append(fieldName).append("\":").append(Arrays.toString(values)).append(",");
-    }
-
-
     static int colorToInt(Color color) {
         return color.getRGB() & 0xFFFFFF;
     }

@@ -100,16 +100,4 @@ class PlayerEvent {
             return playerEvent;
         }
     }
-
-    @Override
-    public String toString() {
-        return "PlayerEvent{" +
-                "id=" + id +
-                ", mouseX=" + mouseX +
-                ", mouseY=" + mouseY +
-                ", leftMouseClick=" + leftMouseClick +
-                ", rightMouseClick=" + rightMouseClick +
-                ", pressedKeys=" + pressedKeys +
-                '}';
-    }
 }
