@@ -1,5 +1,10 @@
 package AopsTheater;
 
+import JsonSimple.JSONArray;
+import JsonSimple.JSONObject;
+import JsonSimple.parser.JSONParser;
+import JsonSimple.parser.ParseException;
+
 import java.util.*;
 
 public class Events {
@@ -49,63 +54,36 @@ public class Events {
     }
 
     public static void parseJSON(String jsonInput) {
-        // TODO Switch to JSON Parser
+        JSONParser parser = new JSONParser();
 
-        int lineIndex = -1;
-        String[] lines = jsonInput.split("\n");
+        try {
+            JSONObject rootObject = (JSONObject) parser.parse(jsonInput);
+            numUpdates = ((Long) rootObject.get("numberOfUpdates")).intValue();
 
-        for (String line : lines) {
-            line = line.trim();
+            JSONArray playerEventsArray = (JSONArray) rootObject.get("playerEvents");
+            for (Object o : playerEventsArray) {
+                JSONObject playerEventObj = (JSONObject) o;
+                PlayerEvent.Builder playerBuilder = new PlayerEvent.Builder();
 
-            if (line.startsWith("\"numberOfUpdates\":")) {
-                String[] parts = line.split(":");
-                numUpdates = Integer.parseInt(parts[1].trim().replace(",", ""));
-            } else if (line.startsWith("\"playerEvents\":")) {
-                while (!(line = lines[++lineIndex].trim()).equals("]")) {
-                    if (line.equals("{")) {
-                        PlayerEvent.Builder playerBuilder = new PlayerEvent.Builder();
+                playerBuilder.setID(((Long) playerEventObj.get("playerId")).intValue());
+                playerBuilder.mouseX((Double) playerEventObj.get("mouseX"));
+                playerBuilder.mouseY((Double) playerEventObj.get("mouseY"));
+                playerBuilder.leftMouseClick((Boolean) playerEventObj.get("leftMouseClick"));
+                playerBuilder.rightMouseClick((Boolean) playerEventObj.get("rightMouseClick"));
 
-                        while (!(line = lines[++lineIndex].trim()).startsWith("}")) {
-                            String[] keyValue = line.split(":");
-                            if (keyValue.length == 2) {
-                                String key = keyValue[0].trim().replace("\"", "");
-                                String value = keyValue[1].trim().replace("\"", "");
-
-                                switch (key) {
-                                    case "playerId":
-                                        playerBuilder.setID(Integer.parseInt(value.replaceAll(",", "")));
-                                        break;
-                                    case "mouseX":
-                                        playerBuilder.mouseX(Double.parseDouble(value.replaceAll(",", "")));
-                                        break;
-                                    case "mouseY":
-                                        playerBuilder.mouseY(Double.parseDouble(value.replaceAll(",", "")));
-                                        break;
-                                    case "leftMouseClick":
-                                        playerBuilder.leftMouseClick(Boolean.parseBoolean(value.replaceAll(",", "")));
-                                        break;
-                                    case "rightMouseClick":
-                                        playerBuilder.rightMouseClick(Boolean.parseBoolean(value.replaceAll(",", "")));
-                                        break;
-                                    case "pressedKeys":
-                                        Set<String> keysList = new HashSet<>();
-                                        if (value.contains("]")) {
-                                            break;
-                                        }
-
-                                        while (!(line = lines[++lineIndex].trim()).startsWith("]")) {
-                                            keysList.add(line.replaceAll("[,\"]", "").toUpperCase());
-                                        }
-                                        playerBuilder.pressedKeys(keysList);
-                                        break;
-                                }
-                            }
-                        }
-                        PlayerEvent playerEvent = playerBuilder.build();
-                        playerIDToPlayerEvent.put(playerEvent.getID(), playerEvent);
-                    }
+                JSONArray pressedKeysArray = (JSONArray) playerEventObj.get("pressedKeys");
+                Set<String> keysList = new HashSet<>();
+                for (Object key : pressedKeysArray) {
+                    keysList.add(((String) key).toUpperCase());
                 }
+                playerBuilder.pressedKeys(keysList);
+
+                PlayerEvent playerEvent = playerBuilder.build();
+                playerIDToPlayerEvent.put(playerEvent.getID(), playerEvent);
             }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            // Handle parse error
         }
     }
 }
