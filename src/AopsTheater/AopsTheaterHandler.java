@@ -132,7 +132,8 @@ public class AopsTheaterHandler {
 
         try {
             director.update();
-            return director.getState().toJSONString();
+            String result = director.getState().toJSONString();
+            return result;
         } catch (Exception e) {
             printStackTrace(e);
             return null;

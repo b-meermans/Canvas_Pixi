@@ -23,7 +23,8 @@ public class MyStage extends Stage {
 
         addText(new Text("Hello, World!"), 400, 100);
         addSound("alpha.mp3");
-        addActor(new AnimatedActor(), 0, 0);
 
+        addActor(new AnimatedActor(), 0, 0);
+        addActor(new AopsBalloon(), 100, 500);
     }
 }

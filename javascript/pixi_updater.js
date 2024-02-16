@@ -328,6 +328,12 @@ function jsonify() {
 
     // TODO This is just a mock up of jsonifying the events
 
+    const fakeElapsed = performance.now();
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = now.toLocaleDateString('en-US', options);
+    const [weekday, month, day, year] = formattedDate.split(' ');
+
     const data = {
       numberOfUpdates: 1,
       playerEvents: [
@@ -339,7 +345,15 @@ function jsonify() {
           rightMouseClick: isMouseDown,
           pressedKeys: Array.from(keysPressed)
         }
-      ]
+      ],
+      elapsedTime: fakeElapsed,
+      month: month,
+      day: parseInt(day, 10),
+      dayName: weekday,
+      year: parseInt(year, 10),
+      hour: now.getHours(),
+      minute: now.getMinutes(),
+      second: now.getSeconds()
     };
 
     const jsonString = JSON.stringify(data, null, 2);
