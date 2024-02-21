@@ -357,6 +357,7 @@ function jsonify() {
     };
 
     const jsonString = JSON.stringify(data, null, 2);
+    console.log(jsonString);
     return jsonString;
 }
 

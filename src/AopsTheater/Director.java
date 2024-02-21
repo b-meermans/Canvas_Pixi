@@ -19,6 +19,7 @@ public class Director {
 
     public void update() {
         for (int actCount = 0; actCount < Events.getNumUpdates(); actCount++) {
+            // TODO Need to check how sounds work over multiple acts
             performOneAct();
         }
     }
