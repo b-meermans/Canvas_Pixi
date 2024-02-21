@@ -8,6 +8,7 @@ import java.util.*;
 
 public class MethodJSONBuilder {
     public static String methodsToJSON(Object object) {
+        // TODO Sort by Class type and then Method name alphabetically
         JSONObject classMethods = new JSONObject();
 
         Class<?> clazz = object.getClass();
