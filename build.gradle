@@ -33,7 +33,7 @@ jar {
 
     archiveBaseName = 'AopsApp'
     archiveVersion = ''
-    destinationDirectory = file('/build')
+    destinationDirectory = file('./build')
 
     // Include all dependencies into the JAR (optional)
     from {
