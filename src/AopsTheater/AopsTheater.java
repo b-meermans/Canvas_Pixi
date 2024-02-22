@@ -1,5 +1,7 @@
 package AopsTheater;
 
+import com.google.gson.Gson;
+
 public class AopsTheater {
     private static String startingStageClassName = "StudentCode.MyStage";
     private static AopsTheater instance;
@@ -56,7 +58,8 @@ public class AopsTheater {
      * @return a json file representing the state of the theater or null if a failure occurred
      */
     public String invokeMethod(String json) {
-        return AopsTheaterHandler.invokeMethod(director, json).toJSONString();
+        Gson gson = new Gson();
+        return gson.toJson(AopsTheaterHandler.invokeMethod(director, json));
     }
 
     /**
@@ -70,7 +73,7 @@ public class AopsTheater {
         }
 
         Events.reset();
-        return director.getState().toJSONString();
+        return director.getJsonStringState();
     }
 
     /**

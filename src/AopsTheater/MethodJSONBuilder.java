@@ -1,55 +1,54 @@
 package AopsTheater;
 
-import JsonSimple.JSONArray;
-import JsonSimple.JSONObject;
+import com.google.gson.Gson;
 
 import java.lang.reflect.*;
 import java.util.*;
 
 public class MethodJSONBuilder {
+    private static final Gson gson = new Gson();
+
     public static String methodsToJSON(Object object) {
-        // TODO Sort by Class type and then Method name alphabetically
-        JSONObject classMethods = new JSONObject();
+        Map<String, Map<String, MethodDetails>> classMethods = new LinkedHashMap<>();
 
         Class<?> clazz = object.getClass();
-        Set<String> methodSignatures = new HashSet<>();
-
         while (clazz != null) {
-            JSONObject methodsJson = new JSONObject();
+            Map<String, MethodDetails> methodsJson = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-            Method[] methods = clazz.getDeclaredMethods();
-            Arrays.stream(methods)
-                    .filter(method -> Modifier.isPublic(method.getModifiers()))
-                    .sorted(Comparator.comparing(Method::getName, String.CASE_INSENSITIVE_ORDER))
-                    .forEach(method -> {
-                        String methodSignature = getMethodSignature(method);
-                        if (!methodSignatures.contains(methodSignature)) {
-                            JSONObject methodDetails = new JSONObject();
-                            methodDetails.put("returnType", getTypeString(method.getGenericReturnType()));
+            for (Method method : clazz.getDeclaredMethods()) {
+                if (Modifier.isPublic(method.getModifiers())) {
+                    String methodName = method.getName();
+                    MethodDetails methodDetails = new MethodDetails(method);
+                    methodsJson.put(methodName, methodDetails);
+                }
+            }
 
-                            JSONArray parameterTypesArray = new JSONArray();
-                            Class<?>[] parameterTypes = method.getParameterTypes();
-                            for (Class<?> paramType : parameterTypes) {
-                                parameterTypesArray.add(getTypeString(paramType));
-                            }
-                            methodDetails.put("parameterTypes", parameterTypesArray);
-
-                            methodsJson.put(method.getName(), methodDetails);
-                            methodSignatures.add(methodSignature);
-                        }
-                    });
-
-            classMethods.put(getSimpleClassName(clazz), methodsJson);
+            if (!methodsJson.isEmpty()) {
+                classMethods.put(getSimpleClassName(clazz), methodsJson);
+            }
             clazz = clazz.getSuperclass();
         }
 
-        return classMethods.toJSONString();
+        return gson.toJson(classMethods);
     }
 
     private static String getSimpleClassName(Class<?> clazz) {
         String className = clazz.getName();
         int lastDotIndex = className.lastIndexOf('.');
         return (lastDotIndex == -1) ? className : className.substring(lastDotIndex + 1);
+    }
+
+    private static class MethodDetails {
+        String returnType;
+        List<String> parameterTypes;
+
+        MethodDetails(Method method) {
+            this.returnType = getTypeString(method.getGenericReturnType());
+            this.parameterTypes = new ArrayList<>();
+            for (Type type : method.getGenericParameterTypes()) {
+                this.parameterTypes.add(getTypeString(type));
+            }
+        }
     }
 
     private static String getTypeString(Type type) {
@@ -77,18 +76,5 @@ public class MethodJSONBuilder {
         } else {
             return type.toString();
         }
-    }
-
-    private static String getMethodSignature(Method method) {
-        StringBuilder signature = new StringBuilder(method.getName() + "(");
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        for (int i = 0; i < parameterTypes.length; i++) {
-            signature.append(getTypeString(parameterTypes[i]));
-            if (i < parameterTypes.length - 1) {
-                signature.append(",");
-            }
-        }
-        signature.append(")");
-        return signature.toString();
     }
 }

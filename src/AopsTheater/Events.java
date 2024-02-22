@@ -1,14 +1,12 @@
 package AopsTheater;
 
-import JsonSimple.JSONArray;
-import JsonSimple.JSONObject;
-import JsonSimple.parser.JSONParser;
-import JsonSimple.parser.ParseException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.util.*;
 
 public class Events {
-
     private static int numUpdates;
     private static Integer defaultPlayer = 1;
     private static Map<Integer, PlayerEvent> playerIDToPlayerEvent;
@@ -63,50 +61,38 @@ public class Events {
     }
 
     private static void parseJSON(String jsonInput) {
-        JSONParser parser = new JSONParser();
+        JsonObject rootObject = JsonParser.parseString(jsonInput).getAsJsonObject();
 
-        try {
-            JSONObject rootObject = (JSONObject) parser.parse(jsonInput);
-            numUpdates = ((Long) rootObject.get("numberOfUpdates")).intValue();
-            elapsedTime = (Long) rootObject.get("elapsedTime");
-            month = (String) rootObject.get("month");
-            day = ((Long) rootObject.get("day")).intValue();
-            year = ((Long) rootObject.get("year")).intValue();
-            dayName = (String) rootObject.get("dayName");
-            hour = ((Long) rootObject.get("hour")).intValue();
-            minute = ((Long) rootObject.get("minute")).intValue();
-            second = ((Long) rootObject.get("second")).intValue();
+        numUpdates = rootObject.get("numberOfUpdates").getAsInt();
+        elapsedTime = rootObject.get("elapsedTime").getAsLong();
+        month = rootObject.get("month").getAsString();
+        day = rootObject.get("day").getAsInt();
+        year = rootObject.get("year").getAsInt();
+        dayName = rootObject.get("dayName").getAsString();
+        hour = rootObject.get("hour").getAsInt();
+        minute = rootObject.get("minute").getAsInt();
+        second = rootObject.get("second").getAsInt();
 
+        JsonArray playerEventsArray = rootObject.getAsJsonArray("playerEvents");
+        for (int i = 0; i < playerEventsArray.size(); i++) {
+            JsonObject playerEventObj = playerEventsArray.get(i).getAsJsonObject();
+            PlayerEvent.Builder playerBuilder = new PlayerEvent.Builder();
 
-            JSONArray playerEventsArray = (JSONArray) rootObject.get("playerEvents");
-            for (Object o : playerEventsArray) {
-                JSONObject playerEventObj = (JSONObject) o;
-                PlayerEvent.Builder playerBuilder = new PlayerEvent.Builder();
+            playerBuilder.setID(playerEventObj.get("playerId").getAsInt());
+            playerBuilder.mouseX(playerEventObj.get("mouseX").getAsDouble());
+            playerBuilder.mouseY(playerEventObj.get("mouseY").getAsDouble());
+            playerBuilder.leftMouseClick(playerEventObj.get("leftMouseClick").getAsBoolean());
+            playerBuilder.rightMouseClick(playerEventObj.get("rightMouseClick").getAsBoolean());
 
-                playerBuilder.setID(((Long) playerEventObj.get("playerId")).intValue());
-
-                // JSON may come back as Longs, so annoying conversion situation
-                double mouseX = ((Number) playerEventObj.get("mouseX")).doubleValue();
-                playerBuilder.mouseX(mouseX);
-                double mouseY = ((Number) playerEventObj.get("mouseY")).doubleValue();
-                playerBuilder.mouseY(mouseY);
-
-                playerBuilder.leftMouseClick((Boolean) playerEventObj.get("leftMouseClick"));
-                playerBuilder.rightMouseClick((Boolean) playerEventObj.get("rightMouseClick"));
-
-                JSONArray pressedKeysArray = (JSONArray) playerEventObj.get("pressedKeys");
-                Set<String> keysList = new HashSet<>();
-                for (Object key : pressedKeysArray) {
-                    keysList.add(((String) key).toUpperCase());
-                }
-                playerBuilder.pressedKeys(keysList);
-
-                PlayerEvent playerEvent = playerBuilder.build();
-                playerIDToPlayerEvent.put(playerEvent.getID(), playerEvent);
+            JsonArray pressedKeysArray = playerEventObj.getAsJsonArray("pressedKeys");
+            Set<String> keysList = new HashSet<>();
+            for (int j = 0; j < pressedKeysArray.size(); j++) {
+                keysList.add(pressedKeysArray.get(j).getAsString().toUpperCase());
             }
+            playerBuilder.pressedKeys(keysList);
 
-        } catch (ParseException e) {
-            e.printStackTrace();
+            PlayerEvent playerEvent = playerBuilder.build();
+            playerIDToPlayerEvent.put(playerEvent.getID(), playerEvent);
         }
     }
 

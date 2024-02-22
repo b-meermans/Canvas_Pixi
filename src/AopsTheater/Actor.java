@@ -5,7 +5,7 @@ import java.awt.*;
 public abstract class Actor extends AopsTheaterComponent {
     private static final String DEFAULT_IMAGE = "AoPS.png";
 
-    private Stage stage;
+    private transient Stage stage;
     private double x;
     private double y;
     private int z;  // TODO Think through how Z will work

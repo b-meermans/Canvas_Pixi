@@ -1,6 +1,7 @@
 package AopsTheater;
 
-import JsonSimple.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -34,10 +35,14 @@ public class Director {
         stage.endAct();
     }
 
-    JSONObject getState() {
+    JsonObject getState() {
         return JsonConversion.getStateJson(stage);
     }
 
+    String getJsonStringState() {
+        Gson gson = new Gson();
+        return gson.toJson(getState());
+    }
 
     AopsTheaterComponent getComponentByUUID(String uuid) {
         return stage.getComponentByUUID(uuid);

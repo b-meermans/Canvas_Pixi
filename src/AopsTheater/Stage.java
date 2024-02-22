@@ -12,10 +12,10 @@ public abstract class Stage extends AopsTheaterComponent {
     private final int height;
     private String image;
 
-    private final List<Actor> actors;
-    private final List<Actor> addedActors;
-    private final List<Text> texts;
-    private final List<Sound> sounds;
+    private transient final List<Actor> actors;
+    private transient final List<Actor> addedActors;
+    private transient final List<Text> texts;
+    private transient final List<Sound> sounds;
 
     public Stage(int width, int height) {
         this(width, height, DEFAULT_IMAGE);

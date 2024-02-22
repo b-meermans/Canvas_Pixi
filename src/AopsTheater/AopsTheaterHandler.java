@@ -1,13 +1,8 @@
 package AopsTheater;
 
-import JsonSimple.*;
-import JsonSimple.parser.*;
+import com.google.gson.JsonObject;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
-import java.util.UUID;
 
 public class AopsTheaterHandler {
     // TODO The Z coordinate is not being used yet for layering objects
@@ -82,17 +77,17 @@ public class AopsTheaterHandler {
         resetTimers();
 
         try {
-            return director.getState().toJSONString();
+            return director.getJsonStringState();
         } catch (Exception e) {
             printStackTrace(e);
             return null;
         }
    }
 
-   static JSONObject invokeMethod(Director director, String json) {
+   static JsonObject invokeMethod(Director director, String json) {
        resetTimers();
 
-       JSONObject result = JsonHandler.invokeMethod(director, json);
+       JsonObject result = JsonHandler.invokeMethod(director, json);
        return result;
    }
 
@@ -132,7 +127,7 @@ public class AopsTheaterHandler {
 
         try {
             director.update();
-            String result = director.getState().toJSONString();
+            String result = director.getJsonStringState();
             return result;
         } catch (Exception e) {
             printStackTrace(e);

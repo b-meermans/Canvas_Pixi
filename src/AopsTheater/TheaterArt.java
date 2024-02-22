@@ -1,14 +1,13 @@
 package AopsTheater;
 
-import JsonSimple.JSONArray;
-import JsonSimple.JSONObject;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+
+import static AopsTheater.JsonConversion.colorToInt;
 
 public class TheaterArt {
-    private static final JSONArray shapes = new JSONArray();
+    private static JsonArray shapes = new JsonArray();
     private static Color fillColor = Color.WHITE;
     private static Color borderColor = Color.BLACK;
     private static Color lineColor = Color.BLACK;
@@ -16,19 +15,19 @@ public class TheaterArt {
     private static double alpha = 1;
 
     public static void clear() {
-        shapes.clear();
+        shapes = new JsonArray();
     }
 
-    private static void addShape(JSONObject shape) {
+    private static void addShape(JsonObject shape) {
         shapes.add(shape);
     }
 
-    private static JSONObject createBaseShape(String type) {
-        JSONObject shape = new JSONObject();
-        shape.put("type", type);
-        shape.put("borderColor", JsonConversion.colorToInt(borderColor));
-        shape.put("thickness", thickness);
-        shape.put("alpha", alpha);
+    private static JsonObject createBaseShape(String type) {
+        JsonObject shape = new JsonObject();
+        shape.addProperty("type", type);
+        shape.addProperty("borderColor", colorToInt(borderColor));
+        shape.addProperty("thickness", thickness);
+        shape.addProperty("alpha", alpha);
         return shape;
     }
 
@@ -37,14 +36,14 @@ public class TheaterArt {
     }
 
     private static void drawEllipse(double x, double y, double width, double height, boolean isFilled) {
-        JSONObject ellipse = createBaseShape("ellipse");
-        ellipse.put("x", x);
-        ellipse.put("y", y);
-        ellipse.put("width", width);
-        ellipse.put("height", height);
+        JsonObject ellipse = createBaseShape("ellipse");
+        ellipse.addProperty("x", x);
+        ellipse.addProperty("y", y);
+        ellipse.addProperty("width", width);
+        ellipse.addProperty("height", height);
 
         if (isFilled) {
-            ellipse.put("fillColor", JsonConversion.colorToInt(fillColor));
+            ellipse.addProperty("fillColor", colorToInt(fillColor));
         }
 
         addShape(ellipse);
@@ -67,15 +66,15 @@ public class TheaterArt {
     }
 
     public static void drawLine(double x1, double y1, double x2, double y2) {
-        JSONObject line = new JSONObject();
-        line.put("type", "line");
-        line.put("x1", x1);
-        line.put("y1", y1);
-        line.put("x2", x2);
-        line.put("y2", y2);
-        line.put("color", JsonConversion.colorToInt(lineColor));
-        line.put("width", thickness);
-        line.put("alpha", alpha);
+        JsonObject line = new JsonObject();
+        line.addProperty("type", "line");
+        line.addProperty("x1", x1);
+        line.addProperty("y1", y1);
+        line.addProperty("x2", x2);
+        line.addProperty("y2", y2);
+        line.addProperty("color", colorToInt(lineColor));
+        line.addProperty("width", thickness);
+        line.addProperty("alpha", alpha);
 
         addShape(line);
     }
@@ -86,42 +85,42 @@ public class TheaterArt {
 
     private static void drawPolygon(double[] xs, double[] ys, boolean isFilled) {
         int length = Math.min(xs.length, ys.length);
-        JSONArray coordinates = new JSONArray();
+        JsonArray coordinates = new JsonArray();
 
         for (int i = 0; i < length; i++) {
-            JSONArray point = new JSONArray();
+            JsonArray point = new JsonArray();
             point.add(xs[i]);
             point.add(ys[i]);
             coordinates.add(point);
         }
 
-        JSONObject polygon = createBaseShape("polygon");
-        polygon.put("coordinates", coordinates);
+        JsonObject polygon = createBaseShape("polygon");
+        polygon.add("coordinates", coordinates);
 
         if (isFilled) {
-            polygon.put("fillColor", JsonConversion.colorToInt(fillColor));
+            polygon.addProperty("fillColor", colorToInt(fillColor));
         }
 
         addShape(polygon);
     }
 
     private static void drawRect(double x, double y, double width, double height, double radius, boolean isFilled) {
-        JSONObject rectangle;
+        JsonObject rectangle;
 
         if (radius > 0) {
             rectangle = createBaseShape("roundedrectangle");
-            rectangle.put("radius", radius);
+            rectangle.addProperty("radius", radius);
         } else {
             rectangle = createBaseShape("rectangle");
         }
 
-        rectangle.put("x", x);
-        rectangle.put("y", y);
-        rectangle.put("width", width);
-        rectangle.put("height", height);
+        rectangle.addProperty("x", x);
+        rectangle.addProperty("y", y);
+        rectangle.addProperty("width", width);
+        rectangle.addProperty("height", height);
 
         if (isFilled) {
-            rectangle.put("fillColor", JsonConversion.colorToInt(fillColor));
+            rectangle.addProperty("fillColor", colorToInt(fillColor));
         }
 
         addShape(rectangle);
@@ -159,7 +158,7 @@ public class TheaterArt {
         TheaterArt.lineColor = lineColor;
     }
 
-    static JSONArray getShapes() {
+    public static JsonArray getShapes() {
         return shapes;
     }
 

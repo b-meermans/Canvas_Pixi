@@ -1,147 +1,138 @@
 package AopsTheater;
 
-import JsonSimple.JSONArray;
-import JsonSimple.JSONObject;
-import JsonSimple.parser.JSONParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonArray;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 class JsonHandler {
-    static JSONObject invokeMethod(Director director, String json) {
-        JSONParser parser = new JSONParser();
+    private static final Gson gson = new Gson();
 
-        String uuid = null;
-        String methodName = null;
-        Object targetObject = null;
+    static JsonObject invokeMethod(Director director, String json) {
+        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+
+        String uuid = jsonObject.get("UUID").getAsString();
+        Object targetObject = director.getComponentByUUID(uuid);
+        if (targetObject == null) {
+            targetObject = director.getStage();
+        }
+
+        String methodName = jsonObject.get("method").getAsString();
+        JsonArray parameters = jsonObject.getAsJsonArray("parameters");
         List<Class<?>> types = new ArrayList<>();
         List<Object> args = new ArrayList<>();
 
-        try {
-            JSONObject jsonObject = (JSONObject) parser.parse(json);
+        for (int i = 0; i < parameters.size(); i++) {
+            JsonObject paramObject = parameters.get(i).getAsJsonObject();
+            String type = paramObject.get("type").getAsString();
+            Object value = gson.fromJson(paramObject.get("value"), Object.class);
 
-            uuid = (String) jsonObject.get("UUID");
-            targetObject = director.getComponentByUUID(uuid);
-            if (targetObject == null) {
-                targetObject = director.getStage();
-            }
-
-            methodName = (String) jsonObject.get("method");
-            JSONArray parameters = (JSONArray) jsonObject.get("parameters");
-
-            for (Object parameter : parameters) {
-                JSONObject paramObject = (JSONObject) parameter;
-                String type = (String) paramObject.get("type");
-                Object value = paramObject.get("value");
-
-                switch (type) {
-                    case "int":
-                        types.add(int.class);
-                        args.add(((Number) value).intValue());
-                        break;
-                    case "Integer":
-                        types.add(Integer.class);
-                        args.add(((Number) value).intValue());
-                        break;
-                    case "double":
-                        types.add(double.class);
-                        args.add(((Number) value).doubleValue());
-                        break;
-                    case "Double":
-                        types.add(Double.class);
-                        args.add(((Number) value).doubleValue());
-                        break;
-                    case "float":
-                        types.add(float.class);
-                        args.add(((Number) value).floatValue());
-                        break;
-                    case "Float":
-                        types.add(Float.class);
-                        args.add(((Number) value).floatValue());
-                        break;
-                    case "short":
-                        types.add(short.class);
-                        args.add(((Number) value).shortValue());
-                        break;
-                    case "Short":
-                        types.add(Short.class);
-                        args.add(((Number) value).shortValue());
-                        break;
-                    case "long":
-                        types.add(long.class);
-                        args.add(((Number) value).longValue());
-                        break;
-                    case "Long":
-                        types.add(Long.class);
-                        args.add(((Number) value).longValue());
-                        break;
-                    case "byte":
-                        types.add(byte.class);
-                        args.add(((Number) value).byteValue());
-                        break;
-                    case "Byte":
-                        types.add(Byte.class);
-                        args.add(((Number) value).byteValue());
-                        break;
-                    case "char":
-                        types.add(char.class);
-                        args.add(value);
-                        break;
-                    case "Character":
-                        types.add(Character.class);
-                        args.add(value);
-                        break;
-                    case "boolean":
-                        types.add(boolean.class);
-                        args.add(value);
-                        break;
-                    case "Boolean":
-                        types.add(Boolean.class);
-                        args.add(value);
-                        break;
-                    default:
+            switch (type) {
+                case "int":
+                    types.add(int.class);
+                    args.add(((Number) value).intValue());
+                    break;
+                case "Integer":
+                    types.add(Integer.class);
+                    args.add(((Number) value).intValue());
+                    break;
+                case "double":
+                    types.add(double.class);
+                    args.add(((Number) value).doubleValue());
+                    break;
+                case "Double":
+                    types.add(Double.class);
+                    args.add(((Number) value).doubleValue());
+                    break;
+                case "float":
+                    types.add(float.class);
+                    args.add(((Number) value).floatValue());
+                    break;
+                case "Float":
+                    types.add(Float.class);
+                    args.add(((Number) value).floatValue());
+                    break;
+                case "short":
+                    types.add(short.class);
+                    args.add(((Number) value).shortValue());
+                    break;
+                case "Short":
+                    types.add(Short.class);
+                    args.add(((Number) value).shortValue());
+                    break;
+                case "long":
+                    types.add(long.class);
+                    args.add(((Number) value).longValue());
+                    break;
+                case "Long":
+                    types.add(Long.class);
+                    args.add(((Number) value).longValue());
+                    break;
+                case "byte":
+                    types.add(byte.class);
+                    args.add(((Number) value).byteValue());
+                    break;
+                case "Byte":
+                    types.add(Byte.class);
+                    args.add(((Number) value).byteValue());
+                    break;
+                case "char":
+                    types.add(char.class);
+                    args.add(value);
+                    break;
+                case "Character":
+                    types.add(Character.class);
+                    args.add(value);
+                    break;
+                case "boolean":
+                    types.add(boolean.class);
+                    args.add(value);
+                    break;
+                case "Boolean":
+                    types.add(Boolean.class);
+                    args.add(value);
+                    break;
+                default:
+                    try {
                         types.add(Class.forName(type));
-                        args.add(value);
-                }
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    args.add(value);
 
+            }
+        }
 
         try {
             Class<?>[] parameterTypes = new Class<?>[types.size()];
-            for (int i = 0; i < args.size(); i++) {
-                parameterTypes[i] = types.get(i);
-            }
+            parameterTypes = types.toArray(parameterTypes);
 
             Method method = targetObject.getClass().getMethod(methodName, parameterTypes);
-            Class returnType = method.getReturnType();
+            Class<?> returnType = method.getReturnType();
 
-            if (returnType.equals(Void.TYPE)) {
-                // Nothing to add as a result to the JSON
-                method.invoke(targetObject, args.toArray());
-                return director.getState();
-            } else {
-                // Something was returned, we'll get a String representation to add to the JSON
-                Object result = method.invoke(targetObject, args.toArray());
-                JSONObject jsonObject = director.getState();
+            Object result = method.invoke(targetObject, args.toArray());
+            JsonObject resultJson = director.getState(); // Assuming getState returns a JsonObject
 
-                // If the return was something with a UUID, we'll add a UUID to the json, otherwise, just the String
+            if (returnType != Void.TYPE) {
                 if (result instanceof AopsTheaterComponent) {
-                    jsonObject.put("returned_uuid", ((AopsTheaterComponent) result).getUUID());
+                    resultJson.addProperty("returned_uuid", ((AopsTheaterComponent) result).getUUID());
+                } else {
+                    resultJson.addProperty("returned", gson.toJson(result));
                 }
-                else {
-                    jsonObject.put("returned", result.toString());
-                }
-
-                return jsonObject;
             }
+
+            return resultJson;
         } catch (Exception e) {
             e.printStackTrace();
+            // Handle the exception as required
+            // For instance, return an empty JsonObject or a JsonObject with error info
+            JsonObject errorJson = new JsonObject();
+            errorJson.addProperty("error", "Method invocation failed: " + e.getMessage());
+            return errorJson;
         }
-
-        return null;
     }
 }

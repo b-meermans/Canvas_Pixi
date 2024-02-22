@@ -197,26 +197,6 @@ async function onClick() {
         const json = await aopsTheater.invokeMethod(jsonifyDummyMethod());
         updatePIXI(json);
         console.log(json);
-//        // Grabs all of the method names, comes back as an object [] for now.
-//        // As the demo, the array has index 0 as the class name
-//        // The next indices are the methods under that class.
-//        // If there is a parent class, that class name will be an element at some point
-//        // Ie: [Person, void act(), String getName(), Actor, void setLocation(int, int), Object]
-//        const methods = await runner.getMethodInformation(this.uuid);
-//
-//        // For a demonstration - grab the first actual method
-//        // We need to strip away everything but the method name
-//        const testGrab = await methods[1].toString();
-//        const spaceIndex = testGrab.indexOf(' ');
-//        const parenIndex = testGrab.indexOf('(');
-//        const methodName = testGrab.substring(spaceIndex + 1, parenIndex);
-//
-//        // Which Actor has this UUID?
-//        sprite = await runner.getSpriteByUUID(this.uuid);
-//        // Ask the Actor to use the method
-//        await sprite[methodName]();
-//        // Redraw everything in case this modified other Actors
-//        updatePIXI(await runner.getState());
     }
 }
 
@@ -357,7 +337,6 @@ function jsonify() {
     };
 
     const jsonString = JSON.stringify(data, null, 2);
-    console.log(jsonString);
     return jsonString;
 }
 

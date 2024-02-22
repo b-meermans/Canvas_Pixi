@@ -3,7 +3,7 @@ package AopsTheater;
 import java.awt.*;
 
 public class Text extends AopsTheaterComponent {
-    private Stage stage;
+    private transient Stage stage;
 
     private double x;
     private double y;
