@@ -16,8 +16,6 @@ public class Balloon extends Actor {
         setUuid("A");
     }
 
-
-
     public void act() { AopsTheaterHandler.addMethodToStack(19);
         if (Events.isKeyPressed(1,"up")) {
             AopsTheaterHandler.changeStatement(21);                    yVelocity -= ACCELERATION;

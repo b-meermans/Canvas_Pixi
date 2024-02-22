@@ -6,8 +6,6 @@ public class Follower extends Actor {
         double mouseX = Events.getMouseX();
         double mouseY = Events.getMouseY();
 
-
-
         double xDif = getX() - mouseX;
         double yDif = getY() - mouseY;
 
