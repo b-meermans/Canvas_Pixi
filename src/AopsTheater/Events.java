@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import java.util.*;
 
 public class Events {
+    // TODO How do we want to actually handle multiplayer controls?
     private static int numUpdates;
     private static Integer defaultPlayer = 1;
     private static Map<Integer, PlayerEvent> playerIDToPlayerEvent;

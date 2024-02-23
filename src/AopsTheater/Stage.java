@@ -80,6 +80,8 @@ public abstract class Stage extends AopsTheaterComponent {
         return sounds;
     }
 
+
+
     void endAct() {
         actors.addAll(addedActors);
         addedActors.clear();
@@ -106,4 +108,8 @@ public abstract class Stage extends AopsTheaterComponent {
 
         return null;
     }
+
+    // TODO Objects in Range?
+    // TODO Get all Objects (Text, Actor)
+
 }

@@ -3,6 +3,7 @@ package AopsTheater;
 import com.google.gson.Gson;
 
 public class AopsTheater {
+    // TODO Starting stage situation
     private static String startingStageClassName = "StudentCode.MyStage";
     private static AopsTheater instance;
 
@@ -30,7 +31,6 @@ public class AopsTheater {
                 return null;
             }
         }
-
 
         return instance;
     }
