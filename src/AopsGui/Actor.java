@@ -1,5 +1,6 @@
 package AopsGui;//
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -111,5 +112,22 @@ public abstract class Actor {
     }
 
     public void addedToStage(Stage stage) {
+    }
+
+    public<A extends Actor> A getOneObjectIntersecting(Class<A> cls) {
+        List<A> actors = stage.getObjectsInRadius(cls, Coordinate.getCoordinate(this), Math.max(image.getWidth(), image.getHeight()));
+        for (A actor : actors) {
+            if (!this.equals(actor) && isIntersecting(actor)) {
+                return actor;
+            }
+        }
+        return null;
+    }
+
+    public boolean isIntersecting(Actor actor) {
+        if (actor == null || actor.stage == null) {
+            return false;
+        }
+        return Colliders.isColliding(this.collider, actor.collider);
     }
 }

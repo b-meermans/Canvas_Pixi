@@ -66,4 +66,14 @@ public abstract class Stage {
     SpatialHashMap getSpatialHashMap() {
         return spatialHashMap;
     }
+
+    public<A extends Actor> List<A> getObjectsInRadius(Class<A> cls, double x, double y, double radius) {
+        Coordinate coordinate = new Coordinate(x,y);
+        return spatialHashMap.getAllWithinRadius(cls, coordinate, radius);
+    }
+
+    public<A extends Actor> List<A> getKNearestObjectsInRadius(Class<A> cls, double x, double y, double radius, int k) {
+        Coordinate coordinate = new Coordinate(x, y);
+        return spatialHashMap.getKNearestWithinRadius(cls, coordinate, radius, k);
+    }
 }

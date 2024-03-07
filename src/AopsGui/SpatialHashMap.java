@@ -1,5 +1,6 @@
 package AopsGui;
 
+import java.sql.Array;
 import java.util.*;
 public class SpatialHashMap
 {
@@ -18,16 +19,17 @@ public class SpatialHashMap
         this.cols = stage.getWidth() / this.yCellSize;
         grid = new HashMap<>();
     }
-    public Cell getCell(Coordinate coord) {
-        int r = (int)(coord.getY() / xCellSize);
-        int c = (int)(coord.getX() / yCellSize);
-        return new Cell(r,c);
+    public Cell getCell(Coordinate coordinate) {
+        int r = (int)(coordinate.getY() / xCellSize);
+        int c = (int)(coordinate.getX() / yCellSize);
+        return new Cell(r,c, rows, cols);
     }
     public Cell getCell(Actor actor) {
         return getCell(Coordinate.getCoordinate(actor));
     }
     public void insertNew(Actor actor) {
-        grid.get(getCell(actor)).add(actor);
+        Cell key = getCell(actor);
+        grid.computeIfAbsent(key, k -> new ArrayList<>()).add(actor);
     }
     public void insertNew(List<Actor> actors) {
         for (Actor actor : actors) {
@@ -60,13 +62,11 @@ public class SpatialHashMap
         int maxRow = (int) (maxY / yCellSize);
         int minRow = (int) (minY / yCellSize);
 
-        int maxDc = Math.max(maxCol - source.getCol(), source.getCol() - minCol);
-        int maxDr = Math.max(maxRow - source.getRow(), source.getRow() - minRow);
         List<A> allInRadius = new ArrayList<>();
-        for (int dr = -maxDr; dr <= maxDr; dr++) {
-            for (int dc = -maxDc; dc <= maxDc; dc++) {
-                Cell current = new Cell(source.row + dr, source.col + dc);
-                if (!isValidCell(current)) continue;
+        for (int row = minRow; row <= maxRow; row++) {
+            for (int col = minCol; col <= maxCol; col++) {
+                Cell current = new Cell(row, col, rows, cols);
+                if (!current.isValid()) continue;
                 List<Actor> actorsInCell = grid.get(current);
                 for (Actor actor : actorsInCell) {
                     if (!cls.isInstance(actor)) continue;
@@ -78,53 +78,46 @@ public class SpatialHashMap
         }
         return allInRadius;
     }
-    public<A extends Actor> List<A> getKNearestInRadius(Class<A> cls, Actor source, int k, double radius) {
-        List<A> neighbors = getKNearestWithinRadius(cls, Coordinate.getCoordinate(source), k + 1, radius); // k + 1 os l nearest + self
-        neighbors.remove(source); // remove self
+    public<A extends Actor> List<A> getKNearestInRadius(Class<A> cls, Actor source, double radius, int k) {
+        List<A> neighbors = getKNearestWithinRadius(cls, Coordinate.getCoordinate(source), radius, k + 1); // k + 1 os k-nearest + self
+        neighbors.removeIf(actor -> actor.equals(source));
         return neighbors;
     }
-    public<A extends Actor> List<A> getKNearestWithinRadius(Class<A> cls, Coordinate origin, int k, double radius) {
-        PriorityQueue<A> kNearestQueue = new PriorityQueue<>(Comparator.comparingDouble(a -> calculateQuadrature((Actor)a, origin)));
+    public <A extends Actor> List<A> getKNearestWithinRadius(Class<A> cls, Coordinate origin, double radius, int k) {
         List<A> actorsInRadius = getAllWithinRadius(cls, origin, radius);
-        kNearestQueue.addAll(actorsInRadius);
-        List<A> kNearestList = new ArrayList<>();
-        for (int i = 0; i < Math.min(k, kNearestQueue.size()); i++) {
-            kNearestList.add(kNearestQueue.poll());
-        }
-        return kNearestList;
+
+        actorsInRadius.sort((a1, a2) -> Double.compare(
+                calculateQuadrature(a1, origin),
+                calculateQuadrature(a2, origin)
+        ));
+
+        return actorsInRadius.stream().limit(k).collect(Collectors.toList());
     }
     public double calculateQuadrature(Actor actor, Coordinate coord) {
         double dx = actor.getX() - coord.getX();
         double dy = actor.getY() - coord.getY();
         return dx*dx + dy*dy;
     }
-    public boolean isValidCell(Cell cell) {
-        return isBetween(cell.getRow(), 0, rows)
-                && isBetween(cell.getCol(), 0, cols);
-    }
-    public boolean isBetween(int x, int a, int b) {
-        return x >= a && x < b;
-    }
     public static class Cell
     {
-        private final int row;
-        private final int col;
-        public Cell(int row, int col)
+        private final int row, col, rows, cols;
+        public Cell(int row, int col, int rows, int cols)
         {
             this.row = row;
             this.col = col;
+            this.cols = cols;
+            this.rows = rows;
         }
         @Override
         public int hashCode() {
-            return 31 * row + col;
+            return cols * row + col;
         }
         @Override
         public boolean equals(Object obj)
         {
             if (this == obj) return true;
-            if (!(obj instanceof Cell)) return false;
-            Cell cell = (Cell) obj;
-            return this.row == cell.row && this.col == cell.col;
+            if (!(obj instanceof Cell cell)) return false;
+            return this.row == cell.row && this.col == cell.col && this.rows == cell.rows && this.cols == cell.cols;
         }
         public int getRow() {
             return row;
@@ -135,6 +128,9 @@ public class SpatialHashMap
         @Override
         public String toString() {
             return "Row: " + row + " Col: " + col;
+        }
+        public boolean isValid() {
+            return 0 <= row && row < rows && 0 <= col && col < cols;
         }
     }
 }
