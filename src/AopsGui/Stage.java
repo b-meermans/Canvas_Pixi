@@ -12,9 +12,12 @@ public abstract class Stage {
 
     private final int width;
     private final int height;
+
     private String image;
 
     private final List<Actor> actors;
+
+    private final SpatialHashMap spatialHashMap;
 
     public Stage(int width, int height) {
         this(width, height, DEFAULT_IMAGE);
@@ -25,6 +28,7 @@ public abstract class Stage {
         this.height = height;
         this.image = imageName;
         actors = new ArrayList<>();
+        spatialHashMap = new SpatialHashMap(this, 20, 20);
     }
 
     public void act() {}
@@ -33,8 +37,13 @@ public abstract class Stage {
         actors.add(actor);
         actor.setLocation(x, y);
         actor.setStage(this);
+        actor.addedToStage(this);
+        spatialHashMap.insertNew(actor);
     }
-
+    public void removeActor(Actor actor) {
+        spatialHashMap.remove(actor);
+        actors.remove(actor);
+    }
     public int getWidth() {
         return width;
     }
@@ -53,5 +62,8 @@ public abstract class Stage {
 
     public List<Actor> getActors() {
         return actors;
+    }
+    SpatialHashMap getSpatialHashMap() {
+        return spatialHashMap;
     }
 }

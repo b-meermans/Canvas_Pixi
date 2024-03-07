@@ -1,7 +1,4 @@
 package AopsGui;//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
 
 import java.util.Objects;
 import java.util.UUID;
@@ -14,7 +11,7 @@ public abstract class Actor {
     private UUID uuid;
     private double x;
     private double y;
-    private double rotation;
+    private double degrees;
     private String image;
 
     public Actor() {
@@ -29,16 +26,19 @@ public abstract class Actor {
     public void act() {}
 
     public void move(double distance) {
-        x += Math.cos(rotation) * distance;
-        y += Math.sin(rotation) * distance;
+        Coordinate previousCoordinate = new Coordinate(x, y);
+        x += Math.cos(Math.toRadians(degrees)) * distance;
+        y += Math.sin(Math.toRadians(degrees)) * distance;
+        getStage().getSpatialHashMap().update(this, previousCoordinate);
     }
 
     public void turn(double degrees) {
-        rotation += degrees;
+        this.degrees += degrees;
+        this.degrees %= 360; // degrees between -360 and 360
     }
 
     public void turnTowards(double x, double y) {
-        rotation = Math.atan2(y - this.y, x - this.x);
+        degrees = Math.toDegrees(Math.atan2(y - this.y, x - this.x));
     }
 
     public double getX() {
@@ -50,8 +50,10 @@ public abstract class Actor {
     }
 
     public void setLocation(double x, double y) {
+        Coordinate previousCoordinate = new Coordinate(this.x, this.y);
         this.x = x;
         this.y = y;
+        getStage().getSpatialHashMap().update(this, previousCoordinate);
     }
 
     public String getID() {
@@ -67,11 +69,11 @@ public abstract class Actor {
     }
 
     public double getRotation() {
-        return this.rotation % 360;
+        return this.degrees;
     }
 
-    public void setRotation(double rotation) {
-        this.rotation = rotation;
+    public void setRotation(double degrees) {
+        this.degrees = degrees % 360;
     }
 
     public void setImage(String image) {
@@ -90,22 +92,24 @@ public abstract class Actor {
         if (this == o) {
             return true;
         } else if (o != null && this.getClass() == o.getClass()) {
-            Actor var2 = (Actor)o;
-            return Double.compare(this.x, var2.x) == 0 && Double.compare(this.y, var2.y) == 0 && Double.compare(this.rotation, var2.rotation) == 0;
-        } else {
-            return false;
+            Actor otherActor = (Actor)o;
+            return this.uuid.toString().equals(otherActor.uuid.toString());
         }
+        return false;
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.x, this.y, this.rotation});
+        return uuid.toString().hashCode();
     }
 
     public String toString() {
-        return "AopsGui.Actor{x=" + this.x + ", y=" + this.y + ", rotation=" + this.rotation + "}";
+        return "AopsGui.Actor{x=" + this.x + ", y=" + this.y + ", rotation=" + this.degrees + "}";
     }
 
     void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    public void addedToStage(Stage stage) {
     }
 }
