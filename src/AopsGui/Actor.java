@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public abstract class Actor {
-    private static final String DEFAULT_IMAGE = "AoPS.png";
+    private static final String DEFAULT_IMAGE_FILE_NAME = "AoPS.png";
     private Stage stage;
 
     // TODO Get the uuid out of here. Do not want students to see it.
@@ -13,15 +13,22 @@ public abstract class Actor {
     private double x;
     private double y;
     private double degrees;
-    private String image;
+    private AopsImage image;
+
+    private Collider collider;
 
     public Actor() {
-        this(DEFAULT_IMAGE);
+        this(DEFAULT_IMAGE_FILE_NAME);
     }
 
-    public Actor(String image) {
-        this.image = image;
+    public Actor(String imageFileName) {
+        this.image = new AopsImage(imageFileName);
         uuid = UUID.randomUUID();
+        collider = new RectangularCollider(this, image.getHeight(), image.getWidth());
+    }
+
+    public void setCollider(Collider collider) {
+        this.collider = collider;
     }
 
     public void act() {}
@@ -77,11 +84,13 @@ public abstract class Actor {
         this.degrees = degrees % 360;
     }
 
-    public void setImage(String image) {
+    public void setImage(AopsImage image) {
         this.image = image;
     }
-
-    public String getImage() {
+    public void setImage(String filename) {
+        setImage(new AopsImage(filename));
+    }
+    public AopsImage getImage() {
         return image;
     }
 
@@ -100,7 +109,7 @@ public abstract class Actor {
     }
 
     public int hashCode() {
-        return uuid.toString().hashCode();
+        return uuid.hashCode();
     }
 
     public String toString() {
@@ -114,20 +123,24 @@ public abstract class Actor {
     public void addedToStage(Stage stage) {
     }
 
-    public<A extends Actor> A getOneObjectIntersecting(Class<A> cls) {
-        List<A> actors = stage.getObjectsInRadius(cls, Coordinate.getCoordinate(this), Math.max(image.getWidth(), image.getHeight()));
-        for (A actor : actors) {
-            if (!this.equals(actor) && isIntersecting(actor)) {
-                return actor;
-            }
+    public<A extends Actor> List<A> getIntersectingObjects(Class<A> cls) {
+        List<A> actors = stage.getObjectsInRadius(cls, getX(), getY(),collider.getMaxDimension());
+        actors.removeIf(actor -> this.equals(actor) || !isIntersecting(actor));
+        return actors;
+    }
+
+    public<A extends Actor> A getOneIntersectingObject(Class<A> cls) {
+        List<A> intersectingActors = getIntersectingObjects(cls);
+        if (intersectingActors.isEmpty()) {
+            return null;
         }
-        return null;
+        return intersectingActors.get(0);
     }
 
     public boolean isIntersecting(Actor actor) {
         if (actor == null || actor.stage == null) {
             return false;
         }
-        return Colliders.isColliding(this.collider, actor.collider);
+        return Colliders.isIntersecting(this.collider, actor.collider);
     }
 }
