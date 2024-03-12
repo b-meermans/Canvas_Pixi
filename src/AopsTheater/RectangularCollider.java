@@ -10,7 +10,7 @@ public class RectangularCollider extends Collider {
     }
     public RectangularCollider(Actor sprite) {
         super(sprite);
-        this.image = sprite.getImage();
+        this.image = null;//sprite.getImage();
     }
     public double getWidth() {
         if (image != null) {

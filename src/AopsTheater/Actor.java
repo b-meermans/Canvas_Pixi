@@ -16,7 +16,9 @@ public abstract class Actor extends AopsTheaterComponent {
     private double degrees;
     private double alpha = 1;
     private boolean isVisible = true;
-    private AopsImage image;
+    private String image;
+    private double width = 60;
+    private double height = 30;
 
     private Collider collider;
 
@@ -28,9 +30,10 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public Actor(String imageFilename) {
-        this.image = new AopsImage(imageFilename);
+        //this.image = new AopsImage(imageFilename);
+        this.image = imageFilename;
         z = AopsTheaterHandler.nextZ();
-        collider = new RectangularCollider(this);
+        collider = new RectangularCollider(this, height, width);
     }
 
     public void setCollider(Collider collider) {
@@ -42,17 +45,16 @@ public abstract class Actor extends AopsTheaterComponent {
 
 
 
-    public AopsImage getImage() {
-        return image;
-    }
-
+//    public AopsImage getImage() {
+//        return image;
+//    }
     public void setImage(String imageFilename) {
-        this.image = new AopsImage(imageFilename);
+        this.image = imageFilename;
     }
 
-    public void setImage(AopsImage image) {
-        this.image = image;
-    }
+//    public void setImage(AopsImage image) {
+//        this.image = image;
+//    }
 
     public double getRotation() {
         return this.degrees;
@@ -170,5 +172,17 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void addedToStage(Stage stage) {
+    }
+
+    //temporarily disabling AopsImage dependency for testing
+    public String getImage() {
+        return image;
+    }
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
     }
 }

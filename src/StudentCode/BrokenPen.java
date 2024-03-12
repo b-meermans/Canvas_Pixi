@@ -22,7 +22,7 @@ public class BrokenPen extends Actor {
             turnTowards(mouseX, mouseY);
             move(1);
             moveTowardsMouse();
-            setDegrees(0);
+            setRotation(0);
         }
     }
 
