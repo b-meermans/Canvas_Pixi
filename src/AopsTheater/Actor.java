@@ -13,7 +13,7 @@ public abstract class Actor extends AopsTheaterComponent {
     private double x;
     private double y;
     private int z;  // TODO Think through how Z will work
-    private double rotation;
+    private double degrees;
     private double alpha = 1;
     private boolean isVisible = true;
     private String image;
@@ -59,12 +59,11 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public double getRotation() {
-        return this.rotation;
+        return this.degrees;
     }
 
-    public void setRotation(double rotation) {
-        this.rotation = rotation % 360;
-        this.rotation += (this.rotation < 0) ? 360 : 0;
+    public void setRotation(double degrees) {
+        this.degrees = (degrees % 360 + 360) % 360;
     }
 
     public Stage getStage() {
@@ -104,8 +103,8 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void move(double distance) {
-        x += Math.cos(rotation) * distance;
-        y += Math.sin(rotation) * distance;
+        x += Math.cos(Math.toRadians(degrees)) * distance;
+        y += Math.sin(Math.toRadians(degrees)) * distance;
     }
 
     public void setLocation(double x, double y) {
@@ -122,11 +121,11 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void turn(double degrees) {
-        rotation += degrees;
+        this.degrees += degrees;
     }
 
     public void turnTowards(double x, double y) {
-        rotation = Math.atan2(y - this.y, x - this.x);
+        degrees = Math.toDegrees(Math.atan2(y - this.y, x - this.x));
     }
 
     public boolean isIntersecting(Actor other) {
@@ -201,8 +200,6 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public double getDistance(double x, double y) {
-        double dx = this.getX() - x;
-        double dy = this.getY() - y;
-        return Math.sqrt(dx * dx + dy * dy);
+        return Math.hypot(this.x - x, this.y  - y);
     }
 }
