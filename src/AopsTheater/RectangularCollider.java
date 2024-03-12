@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 public class RectangularCollider extends Collider {
     private double height, width;

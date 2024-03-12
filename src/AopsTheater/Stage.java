@@ -10,12 +10,16 @@ public abstract class Stage extends AopsTheaterComponent {
 
     private final int width;
     private final int height;
-    private String image;
+    private AopsImage background;
+
+
 
     private transient final List<Actor> actors;
     private transient final List<Actor> addedActors;
     private transient final List<Text> texts;
     private transient final List<Sound> sounds;
+
+    private transient final SpatialHashMap spatialHashMap;
 
     public Stage(int width, int height) {
         this(width, height, DEFAULT_IMAGE);
@@ -24,12 +28,12 @@ public abstract class Stage extends AopsTheaterComponent {
     public Stage(int width, int height, String imageName) {
         this.width = width;
         this.height = height;
-        this.image = imageName;
+        this.background = new AopsImage(imageName);
         actors = new ArrayList<>();
         addedActors = new ArrayList<>();
-
         texts = new ArrayList<Text>();
         sounds = new ArrayList<Sound>();
+        spatialHashMap = new SpatialHashMap(this, 20, 20);
     }
 
     public void act() {
@@ -40,6 +44,8 @@ public abstract class Stage extends AopsTheaterComponent {
         addedActors.add(actor);
         actor.setLocation(x, y);
         actor.setStage(this);
+        actor.addedToStage(this);
+        spatialHashMap.insertNew(actor);
     }
 
     public void addText(Text text, double x, double y) {
@@ -60,12 +66,16 @@ public abstract class Stage extends AopsTheaterComponent {
         return height;
     }
 
-    public String getImage() {
-        return image;
+    public AopsImage getBackground() {
+        return background;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setBackground(String background) {
+        this.background = new AopsImage(background);
+    }
+
+    public void setBackground(AopsImage background) {
+        this.background = background;
     }
 
     public List<Actor> getActors() {
@@ -108,8 +118,18 @@ public abstract class Stage extends AopsTheaterComponent {
 
         return null;
     }
+    SpatialHashMap getSpatialHashMap() {
+        return spatialHashMap;
+    }
+    
+    public<A extends Actor> List<A> getObjectsInRange(Class<A> cls, double x, double y, double radius) {
+           Coordinate coordinate = new Coordinate(x,y);
+           return spatialHashMap.getAllWithinRadius(cls, coordinate, radius);
+    }
+    public<A extends Actor> List<A> getKNearestObjectsInRadius(Class<A> cls, double x, double y, double radius, int k) {
+        Coordinate coordinate = new Coordinate(x, y);
+        return spatialHashMap.getKNearestWithinRadius(cls, coordinate, radius, k);
+    }
 
-    // TODO Objects in Range?
     // TODO Get all Objects (Text, Actor)
-
 }

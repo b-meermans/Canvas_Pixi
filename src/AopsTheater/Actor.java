@@ -16,9 +16,10 @@ public abstract class Actor extends AopsTheaterComponent {
     private double degrees;
     private double alpha = 1;
     private boolean isVisible = true;
-    private String image;
-    private double width = 60;
-    private double height = 30;
+    private AopsImage image;
+
+    private Collider collider;
+
     // TODO Should color be kept as an int, it'll lower the work needed for Json conversions
     private Color tint = Color.WHITE;
 
@@ -26,35 +27,30 @@ public abstract class Actor extends AopsTheaterComponent {
         this(DEFAULT_IMAGE);
     }
 
-    public Actor(String image) {
-        this.image = image;
+    public Actor(String imageFilename) {
+        this.image = new AopsImage(imageFilename);
         z = AopsTheaterHandler.nextZ();
+        collider = new RectangularCollider(this);
+    }
+
+    public void setCollider(Collider collider) {
+        this.collider = collider;
     }
 
     public void act() {
     }
 
-    public double getAlpha() {
-        return alpha;
-    }
 
-    public void setAlpha(double alpha) {
-        this.alpha = Math.max(0.0, Math.min(1.0, alpha));
-    }
 
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public String getImage() {
+    public AopsImage getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(String imageFilename) {
+        this.image = new AopsImage(imageFilename);
+    }
+
+    public void setImage(AopsImage image) {
         this.image = image;
     }
 
@@ -82,14 +78,6 @@ public abstract class Actor extends AopsTheaterComponent {
         this.tint = tint;
     }
 
-    public double getWidth() {
-        return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
     public double getX() {
         return this.x;
     }
@@ -103,15 +91,19 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void move(double distance) {
+        Coordinate previousCoordinate = new Coordinate(x, y);
         x += Math.cos(Math.toRadians(degrees)) * distance;
         y += Math.sin(Math.toRadians(degrees)) * distance;
+        getStage().getSpatialHashMap().update(this, previousCoordinate);
     }
+
 
     public void setLocation(double x, double y) {
+        Coordinate previousCoordinate = new Coordinate(this.x, this.y);
         this.x = x;
         this.y = y;
+        getStage().getSpatialHashMap().update(this, previousCoordinate);
     }
-
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
@@ -121,85 +113,62 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void turn(double degrees) {
-        this.degrees += degrees;
+        setRotation(this.degrees + degrees);
     }
 
     public void turnTowards(double x, double y) {
-        degrees = Math.toDegrees(Math.atan2(y - this.y, x - this.x));
+        setRotation(Math.toDegrees(Math.atan2(y - this.y, x - this.x)));
     }
 
-    public boolean isIntersecting(Actor other) {
-        Rectangle thisRect = new Rectangle((int)x, (int)y, (int)width, (int)height);
-        Rectangle otherRect = new Rectangle((int)other.x, (int)other.y, (int)other.width, (int)other.height);
-        return thisRect.intersects(otherRect);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Actor)) {
+            return false;
+        }
+        Actor actor = (Actor) o;
+        return getUUID().equals(actor.getUUID());
+
+    }
+    @Override
+    public int hashCode() {
+        return getUUID().hashCode();
     }
 
-    private boolean isInRange(Actor other, double radius) {
-        return Math.hypot(other.getX() - this.getX(), other.getY() - this.getY()) <= radius;
+    public<A extends Actor> List<A> getIntersectingObjects(Class<A> cls) {
+        List<A> actors = stage.getObjectsInRange(cls, getX(), getY(), collider.getMaxDimension());
+        actors.removeIf(actor -> this.equals(actor) || !isIntersecting(actor));
+        return actors;
     }
 
-    public List<Actor> getIntersectingActors() {
-        return getIntersectingActors(Actor.class);
-    }
-
-    public <T extends Actor> List<T> getIntersectingActors(Class<T> type) {
-        if (getStage() == null) {
+    public<A extends Actor> A getOneIntersectingObject(Class<A> cls) {
+        List<A> intersectingActors = getIntersectingObjects(cls);
+        if (intersectingActors.isEmpty()) {
             return null;
         }
-
-        List<T> intersectingActors = new ArrayList<>();
-        for (Actor other : getStage().getActors()) {
-            if (this != other && type.isInstance(other) && isIntersecting(other)) {
-                intersectingActors.add(type.cast(other));
-            }
-        }
-        return intersectingActors;
+        return intersectingActors.get(0);
     }
 
-    public List<Actor> getActorsInRange(double radius) {
-        return getActorsInRange(radius, Actor.class);
+    public boolean isIntersecting(Actor actor) {
+        if (actor == null || actor.stage == null) {
+            return false;
+        }
+        return Colliders.isIntersecting(this.collider, actor.collider);
     }
 
-    public <T extends Actor> List<T> getActorsInRange(double radius, Class<T> type) {
-        if (getStage() == null) {
-            return null;
+    public<A extends Actor> List<A> getActorsWithinRadius(Class<A> cls, double radius) {
+        if (stage == null) {
+            return new ArrayList<>();
         }
-
-        List<T> actorsInRange = new ArrayList<>();
-        for (Actor other : getStage().getActors()) {
-            if (this != other && type.isInstance(other) && this.isInRange(other, radius)) {
-                actorsInRange.add(type.cast(other));
-            }
-        }
-        return actorsInRange;
-    }
-
-    public Actor getClosestActorInRange() {
-        return getClosestActorInRange(Actor.class);
-    }
-
-    public <T extends Actor> T getClosestActorInRange(Class<T> type) {
-        // TODO Change this to a radius range limit
-        if (getStage() == null) {
-            return null;
-        }
-
-        T closestActor = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for (Actor other : getStage().getActors()) {
-            if (this != other && type.isInstance(other)) {
-                double distance = getDistance(other.getX(), other.getY());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestActor = type.cast(other);
-                }
-            }
-        }
-        return closestActor;
+        return stage.getSpatialHashMap().getAllWithinRadius(cls, this, radius);
     }
 
     public double getDistance(double x, double y) {
         return Math.hypot(this.x - x, this.y  - y);
+    }
+
+    public void addedToStage(Stage stage) {
     }
 }

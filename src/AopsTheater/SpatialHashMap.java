@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 import java.sql.Array;
 import java.util.*;
@@ -49,7 +49,7 @@ public class SpatialHashMap
         remove(actor, previousCoordinate);
         insertNew(actor);
     }
-    public<A extends Actor> List<A> getAllWithinRadius(Class<A> cls, Actor source, int radius) {
+    public<A extends Actor> List<A> getAllWithinRadius(Class<A> cls, Actor source, double radius) {
         return getAllWithinRadius(cls, Coordinate.getCoordinate(source), radius);
     }
     public<A extends Actor> List<A> getAllWithinRadius(Class<A> cls, Coordinate origin, double radius){
@@ -118,7 +118,8 @@ public class SpatialHashMap
         public boolean equals(Object obj)
         {
             if (this == obj) return true;
-            if (!(obj instanceof Cell cell)) return false;
+            if (!(obj instanceof Cell)) return false;
+            Cell cell = (Cell) obj;
             return this.row == cell.row && this.col == cell.col && this.rows == cell.rows && this.cols == cell.cols;
         }
         public int getRow() {

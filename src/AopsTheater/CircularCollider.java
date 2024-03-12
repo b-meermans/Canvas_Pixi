@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 public class CircularCollider extends Collider {
     private double radius;

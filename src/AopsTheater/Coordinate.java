@@ -1,4 +1,4 @@
-package AopsGui;
+package AopsTheater;
 
 public class Coordinate
 {
@@ -17,7 +17,8 @@ public class Coordinate
     public boolean equals(Object obj)
     {
         if (this == obj) return true;
-        if (!(obj instanceof Coordinate coordinate)) return false;
+        if (!(obj instanceof Coordinate)) return false;
+        Coordinate coordinate = (Coordinate) obj;
         return Double.compare(coordinate.x, this.x) == 0 && Double.compare(coordinate.y, this.y) == 0;
     }
     public double getX() {

@@ -10,7 +10,7 @@ public abstract class AopsTheaterComponent {
     }
 
     String getUUID() {
-        return uuid.toString();
+        return uuid;
     }
 
     // TODO Remove this - just for testing purposes

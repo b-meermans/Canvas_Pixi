@@ -1,17 +1,25 @@
-package AopsGui;
+package AopsTheater;
 
 public class Colliders {
     public static boolean isIntersecting(Collider colliderA, Collider colliderB) {
-        if (colliderA instanceof RectangularCollider rectangularColliderA && colliderB instanceof RectangularCollider rectangularColliderB) {
+        if (colliderA instanceof RectangularCollider && colliderB instanceof RectangularCollider) {
+            RectangularCollider rectangularColliderB = (RectangularCollider) colliderB;
+            RectangularCollider rectangularColliderA = (RectangularCollider) colliderA;
             return isIntersecting(rectangularColliderA, rectangularColliderB);
         }
-        if (colliderA instanceof CircularCollider circularColliderA && colliderB instanceof CircularCollider circularColliderB) {
+        if (colliderA instanceof CircularCollider && colliderB instanceof CircularCollider) {
+            CircularCollider circularColliderB = (CircularCollider) colliderB;
+            CircularCollider circularColliderA = (CircularCollider) colliderA;
             return isIntersecting(circularColliderA, circularColliderB);
         }
-        if (colliderA instanceof CircularCollider circularCollider && colliderB instanceof RectangularCollider rectangularCollider) {
+        if (colliderA instanceof CircularCollider && colliderB instanceof RectangularCollider) {
+            RectangularCollider rectangularCollider = (RectangularCollider) colliderB;
+            CircularCollider circularCollider = (CircularCollider) colliderA;
             return isIntersecting(rectangularCollider, circularCollider);
         }
-        if (colliderB instanceof CircularCollider circularCollider && colliderA instanceof RectangularCollider rectangularCollider) {
+        if (colliderB instanceof CircularCollider && colliderA instanceof RectangularCollider) {
+            RectangularCollider rectangularCollider = (RectangularCollider) colliderA;
+            CircularCollider circularCollider = (CircularCollider) colliderB;
             return isIntersecting(rectangularCollider, circularCollider);
         }
         return false;
