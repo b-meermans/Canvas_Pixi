@@ -1,5 +1,6 @@
 package AopsGui;//
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -124,6 +125,9 @@ public abstract class Actor {
     }
 
     public<A extends Actor> List<A> getIntersectingObjects(Class<A> cls) {
+        if (stage == null) {
+            return new ArrayList<>();
+        }
         List<A> actors = stage.getObjectsInRadius(cls, getX(), getY(),collider.getMaxDimension());
         actors.removeIf(actor -> this.equals(actor) || !isIntersecting(actor));
         return actors;
@@ -142,5 +146,12 @@ public abstract class Actor {
             return false;
         }
         return Colliders.isIntersecting(this.collider, actor.collider);
+    }
+
+    public<A extends Actor> List<A> getActorsWithinRadius(Class<A> cls, double radius) {
+        if (stage == null) {
+            return new ArrayList<>();
+        }
+        List<A>
     }
 }
