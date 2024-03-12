@@ -38,6 +38,12 @@ public class SpatialHashMap
             insertNew(actor);
         }
     }
+
+    public void insertNew(Actor actor, double x, double y) {
+        Cell key = getCell(new Coordinate(x, y));
+        grid.computeIfAbsent(key, k -> new ArrayList<>()).add(actor);
+    }
+
     public void remove(Actor actor) {
         grid.get(getCell(actor)).remove(actor);
     }
@@ -100,6 +106,7 @@ public class SpatialHashMap
         double dy = actor.getY() - coord.getY();
         return dx*dx + dy*dy;
     }
+
     public static class Cell
     {
         private final int row, col, rows, cols;
