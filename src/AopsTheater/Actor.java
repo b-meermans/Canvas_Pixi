@@ -106,6 +106,12 @@ public abstract class Actor extends AopsTheaterComponent {
         this.y = y;
         getStage().getSpatialHashMap().update(this, previousCoordinate);
     }
+
+    void initializeLocation(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }

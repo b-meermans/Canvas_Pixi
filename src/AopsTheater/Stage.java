@@ -42,9 +42,13 @@ public abstract class Stage extends AopsTheaterComponent {
 
     public void addActor(Actor actor, double x, double y) {
         addedActors.add(actor);
-        actor.setLocation(x, y);
+        //first we set stage
         actor.setStage(this);
+        //then we set the initial location
+        actor.initializeLocation(x, y);
+        //then when we have a valid stage and location we call addedToStage
         actor.addedToStage(this);
+        //now that the actor is successfully placed in the stage we can insert it into the spatialHashMap
         spatialHashMap.insertNew(actor);
     }
 
