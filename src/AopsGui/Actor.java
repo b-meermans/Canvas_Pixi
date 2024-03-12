@@ -24,7 +24,7 @@ public abstract class Actor {
     public Actor(String imageFileName) {
         this.image = new AopsImage(imageFileName);
         uuid = UUID.randomUUID();
-        collider = new RectangularCollider(this, image.getHeight(), image.getWidth());
+        collider = new RectangularCollider(this);
     }
 
     public void setCollider(Collider collider) {
