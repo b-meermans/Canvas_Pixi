@@ -29,7 +29,7 @@ public abstract class Stage extends AopsTheaterComponent {
         this.image = imageName;
         actors = new ArrayList<>();
         addedActors = new ArrayList<>();
-        spatialHashGrid = new SpatialHashGrid(height, width, 100);
+        spatialHashGrid = new SpatialHashGrid(width, height, 100);
         texts = new ArrayList<Text>();
         sounds = new ArrayList<Sound>();
     }

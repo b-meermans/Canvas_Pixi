@@ -1,10 +1,11 @@
 package AopsTheater;//
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public abstract class Actor extends AopsTheaterComponent {
     private static final String DEFAULT_IMAGE = "AoPS.png";
@@ -19,6 +20,9 @@ public abstract class Actor extends AopsTheaterComponent {
     private String image;
     private double width = 60;
     private double height = 30;
+
+    private Collider collider;
+
     // TODO Should color be kept as an int, it'll lower the work needed for Json conversions
     private Color tint = Color.WHITE;
 
@@ -28,6 +32,7 @@ public abstract class Actor extends AopsTheaterComponent {
 
     public Actor(String image) {
         this.image = image;
+        collider = new RectangularCollider(this);
         z = AopsTheaterHandler.nextZ();
     }
 
@@ -131,74 +136,62 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public boolean isIntersecting(Actor other) {
-        Rectangle thisRect = new Rectangle((int)x, (int)y, (int)width, (int)height);
-        Rectangle otherRect = new Rectangle((int)other.x, (int)other.y, (int)other.width, (int)other.height);
-        return thisRect.intersects(otherRect);
-    }
-
-    private boolean isInRange(Actor other, double radius) {
-        return Math.hypot(other.getX() - this.getX(), other.getY() - this.getY()) <= radius;
+        if (other == this) {
+            return false;
+        }
+        return Colliders.isIntersecting(this.collider, other.collider);
     }
 
     public List<Actor> getIntersectingActors() {
         return getIntersectingActors(Actor.class);
     }
 
-    public <T extends Actor> List<T> getIntersectingActors(Class<T> type) {
+    public <T extends Actor> List<T> getIntersectingActors(Class<T> cls) {
         if (getStage() == null) {
             return null;
         }
-
-        List<T> intersectingActors = new ArrayList<>();
-        for (Actor other : getStage().getActors()) {
-            if (this != other && type.isInstance(other) && isIntersecting(other)) {
-                intersectingActors.add(type.cast(other));
-            }
+        try {
+            double maxDistance = getBoundingRadius() + cls.newInstance().getBoundingRadius();
+            return getActorsInRange(cls, maxDistance).stream()
+                    .filter(this::isIntersecting)
+                    .collect(Collectors.toList());
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage() + " so the class you passed wasn't intersectable");
         }
-        return intersectingActors;
+    }
+
+    public <T extends Actor> T getOneIntersectingActor(Class<T> cls) {
+        return getIntersectingActors(cls).stream().findFirst().orElse(null);
+    }
+
+    double getBoundingRadius() {
+        return collider.getBoundingRadius();
     }
 
     public List<Actor> getActorsInRange(double radius) {
-        return getActorsInRange(radius, Actor.class);
+        return getActorsInRange(Actor.class, radius);
     }
 
-    public <T extends Actor> List<T> getActorsInRange(double radius, Class<T> type) {
+    public <T extends Actor> List<T> getActorsInRange(Class<T> cls, double radius) {
         if (getStage() == null) {
             return null;
         }
-
-        List<T> actorsInRange = new ArrayList<>();
-        for (Actor other : getStage().getActors()) {
-            if (this != other && type.isInstance(other) && this.isInRange(other, radius)) {
-                actorsInRange.add(type.cast(other));
-            }
-        }
-        return actorsInRange;
+        return getStage().getObjectsInRange(cls, getX(), getY(), radius).stream()
+                .filter(actor -> actor != this)
+                .collect(Collectors.toList());
     }
 
-    public Actor getClosestActorInRange() {
-        return getClosestActorInRange(Actor.class);
+    public Actor getClosestActorInRange(double radius) {
+        return getClosestActorInRange(Actor.class, radius);
     }
 
-    public <T extends Actor> T getClosestActorInRange(Class<T> type) {
-        // TODO Change this to a radius range limit
+    public <T extends Actor> T getClosestActorInRange(Class<T> cls, double radius) {
         if (getStage() == null) {
             return null;
         }
-
-        T closestActor = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for (Actor other : getStage().getActors()) {
-            if (this != other && type.isInstance(other)) {
-                double distance = getDistance(other.getX(), other.getY());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestActor = type.cast(other);
-                }
-            }
-        }
-        return closestActor;
+        return getActorsInRange(cls, radius).stream()
+                .min(Comparator.comparingDouble(actor -> actor.getDistance(x, y)))
+                .orElse(null);
     }
 
     public double getDistance(double x, double y) {
@@ -211,5 +204,13 @@ public abstract class Actor extends AopsTheaterComponent {
         this.x = x;
         this.y = y;
         getStage().getSpatialHashGrid().insertNew(this);
+    }
+
+    Collider getCollider() {
+        return collider;
+    }
+
+    void setCollider(Collider collider) {
+        this.collider = collider;
     }
 }

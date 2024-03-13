@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 public class SpatialHashGrid {
     private transient final HashMap<Cell, List<Actor>> grid;
     private final int rows, columns, cellSize;
-    public SpatialHashGrid(int height, int width, int cellSize) {
+    public SpatialHashGrid(int width , int height, int cellSize) {
         rows = height / cellSize;
         columns = width / cellSize;
         this.cellSize = cellSize;
