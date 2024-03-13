@@ -12,6 +12,8 @@ public abstract class Stage extends AopsTheaterComponent {
     private final int height;
     private AopsImage background;
 
+    private String image;
+
 
 
     private transient final List<Actor> actors;
@@ -29,6 +31,7 @@ public abstract class Stage extends AopsTheaterComponent {
         this.width = width;
         this.height = height;
         this.background = new AopsImage(imageName);
+        this.image = imageName;
         actors = new ArrayList<>();
         addedActors = new ArrayList<>();
         texts = new ArrayList<Text>();
@@ -85,6 +88,11 @@ public abstract class Stage extends AopsTheaterComponent {
 
     public AopsImage getBackground() {
         return background;
+    }
+
+    //temporary
+    public String getImage() {
+        return image;
     }
 
     public void setBackground(String background) {
