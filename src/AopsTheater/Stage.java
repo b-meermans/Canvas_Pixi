@@ -17,6 +17,8 @@ public abstract class Stage extends AopsTheaterComponent {
     private transient final List<Text> texts;
     private transient final List<Sound> sounds;
 
+    private transient final SpatialHashGrid spatialHashGrid;
+
     public Stage(int width, int height) {
         this(width, height, DEFAULT_IMAGE);
     }
@@ -27,7 +29,7 @@ public abstract class Stage extends AopsTheaterComponent {
         this.image = imageName;
         actors = new ArrayList<>();
         addedActors = new ArrayList<>();
-
+        spatialHashGrid = new SpatialHashGrid(height, width, 20);
         texts = new ArrayList<Text>();
         sounds = new ArrayList<Sound>();
     }
@@ -38,8 +40,9 @@ public abstract class Stage extends AopsTheaterComponent {
 
     public void addActor(Actor actor, double x, double y) {
         addedActors.add(actor);
-        actor.setLocation(x, y);
         actor.setStage(this);
+        actor.initializeLocation(x, y);
+        spatialHashGrid.insertNew(actor);
     }
 
     public void addText(Text text, double x, double y) {
@@ -107,6 +110,10 @@ public abstract class Stage extends AopsTheaterComponent {
         }
 
         return null;
+    }
+
+    SpatialHashGrid getSpatialHashGrid() {
+        return spatialHashGrid;
     }
 
     // TODO Objects in Range?

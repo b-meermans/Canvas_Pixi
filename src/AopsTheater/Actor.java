@@ -63,8 +63,7 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void setRotation(double rotation) {
-        this.rotation = rotation % 360;
-        this.rotation += (this.rotation < 0) ? 360 : 0;
+        this.rotation = (rotation % 360 + 360) % 360;
     }
 
     public Stage getStage() {
@@ -104,11 +103,13 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public void move(double distance) {
-        x += Math.cos(rotation) * distance;
-        y += Math.sin(rotation) * distance;
+        double newX = x + Math.cos(Math.toRadians(rotation)) * distance;
+        double newY = y + Math.sin(Math.toRadians(rotation)) * distance;
+        setLocation(newX, newY);
     }
 
     public void setLocation(double x, double y) {
+        getStage().getSpatialHashGrid().updateLocation(this, x, y);
         this.x = x;
         this.y = y;
     }
@@ -204,5 +205,10 @@ public abstract class Actor extends AopsTheaterComponent {
         double dx = this.getX() - x;
         double dy = this.getY() - y;
         return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public void initializeLocation(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 }

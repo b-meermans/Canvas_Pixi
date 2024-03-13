@@ -17,7 +17,7 @@ public class BrokenPen extends Actor {
     public void moveTowardsMouse() {
         double mouseX = Events.getMouseX();
         double mouseY = Events.getMouseY();
-
+        System.out.printf("Mouse x: %s Mouse y: %s%n", mouseX, mouseY);
         if (Math.hypot(mouseX - getX(), mouseY - getY()) > 1) {
             turnTowards(mouseX, mouseY);
             move(1);
