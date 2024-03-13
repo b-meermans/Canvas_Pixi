@@ -149,15 +149,11 @@ public abstract class Actor extends AopsTheaterComponent {
         if (getStage() == null) {
             return null;
         }
-        try {
-            double maxDistance = getBoundingRadius() + cls.newInstance().getBoundingRadius();
+
+            double maxDistance = getBoundingRadius() + 100;
             return getActorsInRange(cls, maxDistance).stream()
                     .filter(this::isIntersecting)
                     .collect(Collectors.toList());
-        } catch (Exception e){
-            System.out.println("got an error");
-            throw new RuntimeException(e.getMessage() + " so the class you passed wasn't intersect-able");
-        }
     }
 
     public <T extends Actor> T getOneIntersectingActor(Class<T> cls) {
