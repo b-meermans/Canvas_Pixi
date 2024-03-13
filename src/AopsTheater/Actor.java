@@ -210,5 +210,6 @@ public abstract class Actor extends AopsTheaterComponent {
     public void initializeLocation(double x, double y) {
         this.x = x;
         this.y = y;
+        getStage().getSpatialHashGrid().insertNew(this);
     }
 }

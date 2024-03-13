@@ -29,7 +29,7 @@ public abstract class Stage extends AopsTheaterComponent {
         this.image = imageName;
         actors = new ArrayList<>();
         addedActors = new ArrayList<>();
-        spatialHashGrid = new SpatialHashGrid(height, width, 20);
+        spatialHashGrid = new SpatialHashGrid(height, width, 100);
         texts = new ArrayList<Text>();
         sounds = new ArrayList<Sound>();
     }
@@ -42,7 +42,6 @@ public abstract class Stage extends AopsTheaterComponent {
         addedActors.add(actor);
         actor.setStage(this);
         actor.initializeLocation(x, y);
-        spatialHashGrid.insertNew(actor);
     }
 
     public void addText(Text text, double x, double y) {
@@ -114,6 +113,15 @@ public abstract class Stage extends AopsTheaterComponent {
 
     SpatialHashGrid getSpatialHashGrid() {
         return spatialHashGrid;
+    }
+
+
+    public<A extends Actor> List<A> getObjectsInRange(Class<A> cls, double x, double y, double radius) {
+        return spatialHashGrid.getObjectsInRange(cls, x, y, radius);
+    }
+
+    public<A extends Actor> List<A> getKNearestObjectsInRange(Class<A> cls, int k, double x, double y, double radius) {
+        return spatialHashGrid.getKNearestObjectsInRange(cls, k, x, y, radius);
     }
 
     // TODO Objects in Range?
