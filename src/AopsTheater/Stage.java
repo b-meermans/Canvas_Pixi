@@ -58,14 +58,6 @@ public abstract class Stage extends AopsTheaterComponent {
 
         //now that the actor is successfully placed in the stage we can insert it into the spatialHashMap
         spatialHashMap.insertNew(actor);
-
-        spatialHashMap.insertNew(actor, x, y);
-        actor.setLocation(x, y);
-
-
-        spatialHashMap.insertNew(actor, x, y);
-        actor.setLocation(x, y);
-
     }
 
     public void addText(Text text, double x, double y) {
@@ -93,6 +85,10 @@ public abstract class Stage extends AopsTheaterComponent {
     //temporary
     public String getImage() {
         return image;
+    }
+
+    public void setImage(String imageFilename) {
+        this.image = imageFilename;
     }
 
     public void setBackground(String background) {

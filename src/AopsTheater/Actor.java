@@ -1,8 +1,6 @@
-package AopsTheater;//
+package AopsTheater;
 
 import java.awt.Color;
-import java.awt.Rectangle;
-
 import java.util.List;
 import java.util.ArrayList;
 
@@ -12,7 +10,7 @@ public abstract class Actor extends AopsTheaterComponent {
     private transient Stage stage;
     private double x;
     private double y;
-    private int z;  // TODO Think through how Z will work
+    private int z; // TODO Think through how Z will work
     private double degrees;
     private double alpha = 1;
     private boolean isVisible = true;
@@ -21,8 +19,6 @@ public abstract class Actor extends AopsTheaterComponent {
     private double height = 30;
 
     private Collider collider;
-
-    // TODO Should color be kept as an int, it'll lower the work needed for Json conversions
     private Color tint = Color.WHITE;
 
     public Actor() {
@@ -30,7 +26,6 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public Actor(String imageFilename) {
-        //this.image = new AopsImage(imageFilename);
         this.image = imageFilename;
         z = AopsTheaterHandler.nextZ();
         collider = new RectangularCollider(this, height, width);
@@ -43,18 +38,9 @@ public abstract class Actor extends AopsTheaterComponent {
     public void act() {
     }
 
-
-
-//    public AopsImage getImage() {
-//        return image;
-//    }
     public void setImage(String imageFilename) {
         this.image = imageFilename;
     }
-
-//    public void setImage(AopsImage image) {
-//        this.image = image;
-//    }
 
     public double getRotation() {
         return this.degrees;
@@ -99,17 +85,11 @@ public abstract class Actor extends AopsTheaterComponent {
         getStage().getSpatialHashMap().update(this, previousCoordinate);
     }
 
-
     public void setLocation(double x, double y) {
         Coordinate previousCoordinate = new Coordinate(this.x, this.y);
         this.x = x;
         this.y = y;
         getStage().getSpatialHashMap().update(this, previousCoordinate);
-    }
-
-    void initializeLocation(double x, double y) {
-        this.x = x;
-        this.y = y;
     }
 
     public void setVisible(boolean isVisible) {
@@ -138,20 +118,20 @@ public abstract class Actor extends AopsTheaterComponent {
         }
         Actor actor = (Actor) o;
         return getUUID().equals(actor.getUUID());
-
     }
+
     @Override
     public int hashCode() {
         return getUUID().hashCode();
     }
 
-    public<A extends Actor> List<A> getIntersectingObjects(Class<A> cls) {
+    public <A extends Actor> List<A> getIntersectingObjects(Class<A> cls) {
         List<A> actors = stage.getObjectsInRange(cls, getX(), getY(), collider.getMaxDimension());
         actors.removeIf(actor -> this.equals(actor) || !isIntersecting(actor));
         return actors;
     }
 
-    public<A extends Actor> A getOneIntersectingObject(Class<A> cls) {
+    public <A extends Actor> A getOneIntersectingObject(Class<A> cls) {
         List<A> intersectingActors = getIntersectingObjects(cls);
         if (intersectingActors.isEmpty()) {
             return null;
@@ -160,13 +140,13 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public boolean isIntersecting(Actor actor) {
-        if (actor == null || actor.stage == null) {
+        if (actor == null || actor.stage == null || stage == null || ! actor.stage.equals(stage)) {
             return false;
         }
         return Colliders.isIntersecting(this.collider, actor.collider);
     }
 
-    public<A extends Actor> List<A> getActorsWithinRadius(Class<A> cls, double radius) {
+    public <A extends Actor> List<A> getActorsWithinRadius(Class<A> cls, double radius) {
         if (stage == null) {
             return new ArrayList<>();
         }
@@ -174,21 +154,42 @@ public abstract class Actor extends AopsTheaterComponent {
     }
 
     public double getDistance(double x, double y) {
-        return Math.hypot(this.x - x, this.y  - y);
+        return Math.hypot(this.x - x, this.y - y);
     }
 
     public void addedToStage(Stage stage) {
     }
 
-    //temporarily disabling AopsImage dependency for testing
     public String getImage() {
         return image;
     }
+
     public double getHeight() {
         return height;
     }
 
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
     public double getWidth() {
         return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(double alpha) {
+        this.alpha = Math.max(0.0, Math.min(1.0, alpha));
+    }
+
+    public void initializeLocation(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 }
