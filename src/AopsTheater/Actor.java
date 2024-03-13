@@ -4,7 +4,6 @@ import java.awt.*;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public abstract class Actor extends AopsTheaterComponent {
@@ -21,7 +20,7 @@ public abstract class Actor extends AopsTheaterComponent {
     private double width = 60;
     private double height = 30;
 
-    private Collider collider;
+    private transient Collider collider;
 
     // TODO Should color be kept as an int, it'll lower the work needed for Json conversions
     private Color tint = Color.WHITE;
@@ -156,7 +155,8 @@ public abstract class Actor extends AopsTheaterComponent {
                     .filter(this::isIntersecting)
                     .collect(Collectors.toList());
         } catch (Exception e){
-            throw new RuntimeException(e.getMessage() + " so the class you passed wasn't intersectable");
+            System.out.println("got an error");
+            throw new RuntimeException(e.getMessage() + " so the class you passed wasn't intersect-able");
         }
     }
 

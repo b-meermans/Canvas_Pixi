@@ -24,11 +24,6 @@ public class CircularCollider implements Collider{
     }
 
     @Override
-    public Class<? extends Collider> getColliderClass() {
-        return this.getClass();
-    }
-
-    @Override
     public double getBoundingRadius() {
         return radius;
     }

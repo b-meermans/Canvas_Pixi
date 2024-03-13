@@ -48,12 +48,7 @@ public class RectangularCollider implements Collider {
     }
 
     @Override
-    public Class<? extends Collider> getColliderClass() {
-        return this.getClass();
-    }
-
-    @Override
     public double getBoundingRadius() {
-        return Math.max(width, height);
+        return Math.hypot(width, height) / 2;
     }
 }
